@@ -1,24 +1,63 @@
 package com.constructionnote.constructionnote.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Construction {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "construction_id")
     private Long id;
+    @Column(nullable = false)
+    private String kind;
+    @Column(nullable = false)
     private Date timeBegin;
+    @Column(nullable = false)
     private Date timeEnd;
+    @Column(nullable = false)
     private String city;
+    @Column(nullable = false)
     private String district;
+    @Column(nullable = false)
     private String dong;
-    private String income;
-    private String account;
+    private String workSiteDescription;
+    private String clientName;
+    private String phoneNumber;
+    private Integer income;
+    private Integer cost;
+    private boolean moneyGiven;
+    private boolean moneyReceived;
+    private String memo;
 
-    @OneToMany(mappedBy = "construction")
+    @OneToMany(mappedBy = "construction", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConstructionUser> constructionUserList = new ArrayList<>();
+
+    @Builder
+    public Construction(String kind, Date timeBegin, Date timeEnd, String city, String district, String dong, String workSiteDescription, String clientName, String phoneNumber, Integer income, Integer cost, boolean moneyGiven, boolean moneyReceived, String memo) {
+        this.kind = kind;
+        this.timeBegin = timeBegin;
+        this.timeEnd = timeEnd;
+        this.city = city;
+        this.district = district;
+        this.dong = dong;
+        this.workSiteDescription = workSiteDescription;
+        this.clientName = clientName;
+        this.phoneNumber = phoneNumber;
+        this.income = income;
+        this.cost = cost;
+        this.moneyGiven = moneyGiven;
+        this.moneyReceived = moneyReceived;
+        this.memo = memo;
+    }
+
+    public void addConstructionUser(ConstructionUser constructionUser) {
+        this.constructionUserList.add(constructionUser);
+    }
 }
