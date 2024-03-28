@@ -81,14 +81,9 @@ public class ConstructionServiceImpl implements ConstructionService {
         long currentMilliseconds = utilDate.getTime();
         java.sql.Date curDate = new java.sql.Date(currentMilliseconds);
 
-        System.out.println("=================" + curDate);
-        System.out.println(timeBegin.before(curDate));
-        System.out.println(timeEnd.after(curDate));
-
         if(curDate.before(timeBegin)) {
             return StatusType.SCHEDULED;
         } else if(timeBegin.before(curDate) && timeEnd.after(curDate)){
-            System.out.println("사이에 있음");
             return StatusType.IN_PROGRESS;
         } else {
             if(moneyReceived) {
