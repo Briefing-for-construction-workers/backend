@@ -1,14 +1,12 @@
 package com.constructionnote.constructionnote.controller;
 
 import com.constructionnote.constructionnote.api.request.ConstructionReq;
+import com.constructionnote.constructionnote.api.response.ConstructionRes;
 import com.constructionnote.constructionnote.service.ConstructionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +20,15 @@ public class ConstructionController {
         try {
             constructionService.registerConstruction(constructionReq);
             return new ResponseEntity<String>("Construction created!", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @GetMapping("/{constructionid}")
+    public ResponseEntity<?> view(@PathVariable("constructionid") Long constructionId) {
+        try {
+            return new ResponseEntity<ConstructionRes>(constructionService.viewConstruction(constructionId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
