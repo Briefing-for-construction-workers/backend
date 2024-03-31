@@ -31,12 +31,6 @@ public class ConstructionServiceImpl implements ConstructionService {
                 .district(constructionReq.getConstructionSite().getAddress().getDistrict())
                 .dong(constructionReq.getConstructionSite().getAddress().getDong())
                 .workSiteDescription(constructionReq.getConstructionSite().getWorkSiteDescription())
-                .clientName(constructionReq.getClient().getClientName())
-                .phoneNumber(constructionReq.getClient().getPhoneNumber())
-                .income(constructionReq.getAccount().getIncome())
-                .cost(constructionReq.getAccount().getCost())
-                .moneyGiven(constructionReq.getAccount().isMoneyGiven())
-                .moneyReceived(constructionReq.getAccount().isMoneyReceived())
                 .memo(constructionReq.getMemo())
                 .build();
 
@@ -61,22 +55,19 @@ public class ConstructionServiceImpl implements ConstructionService {
         //상태 구하기
         Date timeBegin = construction.getTimeBegin();
         Date timeEnd = construction.getTimeEnd();
-        boolean moneyReceived = construction.isMoneyReceived();
 
-        StatusType statusType = getStatus(timeBegin, timeEnd, moneyReceived);
+        StatusType statusType = getStatus(timeBegin, timeEnd);
 
         return ConstructionRes.builder()
                 .statusType(statusType)
                 .kind(construction.getKind())
                 .schedule(Schedule.createSchedule(timeBegin, timeEnd))
                 .constructionSite(ConstructionSite.createConstructionSite(construction.getCity(), construction.getDistrict(), construction.getDong(), construction.getWorkSiteDescription()))
-                .client(Client.createClient(construction.getClientName(), construction.getPhoneNumber()))
-                .account(Account.createAccount(construction.getCost(), construction.getIncome(), construction.isMoneyGiven(), construction.isMoneyReceived()))
                 .memo(construction.getMemo())
                 .build();
     }
 
-    private StatusType getStatus(Date timeBegin, Date timeEnd, boolean moneyReceived) {
+    private StatusType getStatus(Date timeBegin, Date timeEnd) {
         java.util.Date utilDate = new java.util.Date();
         long currentMilliseconds = utilDate.getTime();
         java.sql.Date curDate = new java.sql.Date(currentMilliseconds);
@@ -86,11 +77,7 @@ public class ConstructionServiceImpl implements ConstructionService {
         } else if(timeBegin.before(curDate) && timeEnd.after(curDate)){
             return StatusType.IN_PROGRESS;
         } else {
-            if(moneyReceived) {
-                return StatusType.RECEIVED;
-            } else {
-                return StatusType.NOT_RECEIVED;
-            }
+            return StatusType.FINISHED;
         }
     }
 }

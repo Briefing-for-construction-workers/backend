@@ -30,19 +30,13 @@ public class Construction {
     @Column(nullable = false)
     private String dong;
     private String workSiteDescription;
-    private String clientName;
-    private String phoneNumber;
-    private Integer income;
-    private Integer cost;
-    private boolean moneyGiven;
-    private boolean moneyReceived;
     private String memo;
 
     @OneToMany(mappedBy = "construction", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConstructionUser> constructionUserList = new ArrayList<>();
 
     @Builder
-    public Construction(String kind, Date timeBegin, Date timeEnd, String city, String district, String dong, String workSiteDescription, String clientName, String phoneNumber, Integer income, Integer cost, boolean moneyGiven, boolean moneyReceived, String memo) {
+    public Construction(String kind, Date timeBegin, Date timeEnd, String city, String district, String dong, String workSiteDescription, String memo) {
         this.kind = kind;
         this.timeBegin = timeBegin;
         this.timeEnd = timeEnd;
@@ -50,12 +44,6 @@ public class Construction {
         this.district = district;
         this.dong = dong;
         this.workSiteDescription = workSiteDescription;
-        this.clientName = clientName;
-        this.phoneNumber = phoneNumber;
-        this.income = income;
-        this.cost = cost;
-        this.moneyGiven = moneyGiven;
-        this.moneyReceived = moneyReceived;
         this.memo = memo;
     }
 
