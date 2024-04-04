@@ -1,10 +1,14 @@
 package com.constructionnote.constructionnote.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class User {
     @Id
@@ -35,4 +39,8 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<Review> reviewList = new ArrayList<>();
 
+    @Builder
+    public User(String id) {
+        this.id = id;
+    }
 }
