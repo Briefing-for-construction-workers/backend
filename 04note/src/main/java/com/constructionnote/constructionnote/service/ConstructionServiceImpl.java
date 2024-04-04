@@ -21,7 +21,7 @@ public class ConstructionServiceImpl implements ConstructionService {
     private final UserRepository userRepository;
 
     @Override
-    public void registerConstruction(ConstructionReq constructionReq) {
+    public Long registerConstruction(ConstructionReq constructionReq) {
         User user = userRepository.findById(constructionReq.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
@@ -38,6 +38,7 @@ public class ConstructionServiceImpl implements ConstructionService {
                 .build();
 
         constructionRepository.save(construction);
+        return construction.getId();
     }
 
     @Override

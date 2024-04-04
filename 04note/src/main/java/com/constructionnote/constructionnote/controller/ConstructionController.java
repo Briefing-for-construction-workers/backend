@@ -18,8 +18,8 @@ public class ConstructionController {
     @PostMapping("")
     public ResponseEntity<?> register(@RequestBody ConstructionReq constructionReq) {
         try {
-            constructionService.registerConstruction(constructionReq);
-            return new ResponseEntity<String>("Construction created!", HttpStatus.CREATED);
+            Long constructionId = constructionService.registerConstruction(constructionReq);
+            return new ResponseEntity<>(constructionId, HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
