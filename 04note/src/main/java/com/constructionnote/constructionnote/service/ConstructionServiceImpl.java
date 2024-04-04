@@ -4,7 +4,6 @@ import com.constructionnote.constructionnote.api.request.ConstructionReq;
 import com.constructionnote.constructionnote.api.response.ConstructionRes;
 import com.constructionnote.constructionnote.dto.construction.*;
 import com.constructionnote.constructionnote.entity.Construction;
-import com.constructionnote.constructionnote.entity.ConstructionUser;
 import com.constructionnote.constructionnote.entity.User;
 import com.constructionnote.constructionnote.repository.ConstructionRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
@@ -23,6 +22,9 @@ public class ConstructionServiceImpl implements ConstructionService {
 
     @Override
     public void registerConstruction(ConstructionReq constructionReq) {
+        User user = userRepository.findById(constructionReq.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
         Construction construction = Construction.builder()
                 .kind(constructionReq.getKind())
                 .timeBegin(constructionReq.getSchedule().getTimeBegin())
@@ -32,17 +34,8 @@ public class ConstructionServiceImpl implements ConstructionService {
                 .dong(constructionReq.getConstructionSite().getAddress().getDong())
                 .workSiteDescription(constructionReq.getConstructionSite().getWorkSiteDescription())
                 .memo(constructionReq.getMemo())
-                .build();
-
-        User user = userRepository.findById(constructionReq.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
-
-        ConstructionUser constructionUser = ConstructionUser.builder()
                 .user(user)
-                .construction(construction)
                 .build();
-
-        construction.addConstructionUser(constructionUser);
 
         constructionRepository.save(construction);
     }

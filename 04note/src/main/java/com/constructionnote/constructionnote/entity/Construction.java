@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,7 +19,6 @@ public class Construction {
     private String kind;
     @Column(nullable = false)
     private Date timeBegin;
-    @Column(nullable = false)
     private Date timeEnd;
     @Column(nullable = false)
     private String city;
@@ -32,11 +29,12 @@ public class Construction {
     private String workSiteDescription;
     private String memo;
 
-    @OneToMany(mappedBy = "construction", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConstructionUser> constructionUserList = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Builder
-    public Construction(String kind, Date timeBegin, Date timeEnd, String city, String district, String dong, String workSiteDescription, String memo) {
+    public Construction(String kind, Date timeBegin, Date timeEnd, String city, String district, String dong, String workSiteDescription, String memo, User user) {
         this.kind = kind;
         this.timeBegin = timeBegin;
         this.timeEnd = timeEnd;
@@ -45,9 +43,6 @@ public class Construction {
         this.dong = dong;
         this.workSiteDescription = workSiteDescription;
         this.memo = memo;
-    }
-
-    public void addConstructionUser(ConstructionUser constructionUser) {
-        this.constructionUserList.add(constructionUser);
+        this.user = user;
     }
 }
