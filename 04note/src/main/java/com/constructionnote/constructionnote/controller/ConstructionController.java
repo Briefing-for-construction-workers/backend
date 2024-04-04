@@ -34,6 +34,16 @@ public class ConstructionController {
         }
     }
 
+    @PutMapping("/{constructionid}")
+    public ResponseEntity<?> update(@PathVariable("constructionid") Long constructionId, @RequestBody ConstructionReq constructionReq) {
+        try {
+            Long id = constructionService.updateConstruction(constructionId, constructionReq);
+            return new ResponseEntity<>(id, HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     private ResponseEntity<?> exceptionHandling(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

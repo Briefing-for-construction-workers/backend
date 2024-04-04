@@ -61,6 +61,28 @@ public class ConstructionServiceImpl implements ConstructionService {
                 .build();
     }
 
+    @Override
+    public Long updateConstruction(Long constructionId, ConstructionReq constructionReq) {
+        Construction construction = constructionRepository.findById(constructionId)
+                .orElseThrow(() -> new IllegalArgumentException("construction doesn't exist"));
+
+        User user = userRepository.findById(constructionReq.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        String kind = constructionReq.getKind();
+        Date timeBegin = constructionReq.getSchedule().getTimeBegin();
+        Date timeEnd = constructionReq.getSchedule().getTimeEnd();
+        String city = constructionReq.getConstructionSite().getAddress().getCity();
+        String district = constructionReq.getConstructionSite().getAddress().getDistrict();
+        String dong = constructionReq.getConstructionSite().getAddress().getDong();
+        String workSiteDescription = constructionReq.getConstructionSite().getWorkSiteDescription();
+        String memo = constructionReq.getMemo();
+
+        construction.updateConstruction(kind, timeBegin, timeEnd, city, district, dong, workSiteDescription, memo, user);
+        constructionRepository.save(construction);
+        return construction.getId();
+    }
+
     private StatusType getStatus(Date timeBegin, Date timeEnd) {
         java.util.Date utilDate = new java.util.Date();
         long currentMilliseconds = utilDate.getTime();

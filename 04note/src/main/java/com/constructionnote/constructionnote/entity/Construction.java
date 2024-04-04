@@ -1,10 +1,7 @@
 package com.constructionnote.constructionnote.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 
@@ -35,6 +32,18 @@ public class Construction {
 
     @Builder
     public Construction(String kind, Date timeBegin, Date timeEnd, String city, String district, String dong, String workSiteDescription, String memo, User user) {
+        this.kind = kind;
+        this.timeBegin = timeBegin;
+        this.timeEnd = timeEnd;
+        this.city = city;
+        this.district = district;
+        this.dong = dong;
+        this.workSiteDescription = workSiteDescription;
+        this.memo = memo;
+        this.user = user;
+    }
+
+    public void updateConstruction(String kind, Date timeBegin, Date timeEnd, String city, String district, String dong, String workSiteDescription, String memo, User user) {
         this.kind = kind;
         this.timeBegin = timeBegin;
         this.timeEnd = timeEnd;
