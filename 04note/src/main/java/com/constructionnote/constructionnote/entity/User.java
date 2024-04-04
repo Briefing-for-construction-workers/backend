@@ -14,7 +14,7 @@ public class User {
     private String profileUrl;
 
     @OneToMany(mappedBy = "user")
-    private List<ConstructionUser> constructionUserList = new ArrayList<>();
+    private List<Construction> constructionList = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "user_id")

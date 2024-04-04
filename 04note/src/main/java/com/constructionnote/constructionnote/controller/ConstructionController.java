@@ -18,8 +18,8 @@ public class ConstructionController {
     @PostMapping("")
     public ResponseEntity<?> register(@RequestBody ConstructionReq constructionReq) {
         try {
-            constructionService.registerConstruction(constructionReq);
-            return new ResponseEntity<String>("Construction created!", HttpStatus.CREATED);
+            Long constructionId = constructionService.registerConstruction(constructionReq);
+            return new ResponseEntity<>(constructionId, HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
@@ -29,6 +29,16 @@ public class ConstructionController {
     public ResponseEntity<?> view(@PathVariable("constructionid") Long constructionId) {
         try {
             return new ResponseEntity<ConstructionRes>(constructionService.viewConstruction(constructionId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @PutMapping("/{constructionid}")
+    public ResponseEntity<?> update(@PathVariable("constructionid") Long constructionId, @RequestBody ConstructionReq constructionReq) {
+        try {
+            Long id = constructionService.updateConstruction(constructionId, constructionReq);
+            return new ResponseEntity<>(id, HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
