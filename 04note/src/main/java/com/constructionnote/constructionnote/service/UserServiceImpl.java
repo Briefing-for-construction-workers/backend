@@ -20,4 +20,10 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
     }
+
+    @Override
+    public boolean exist(String userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null;
+    }
 }
