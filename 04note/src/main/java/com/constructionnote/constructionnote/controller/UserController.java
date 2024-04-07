@@ -1,11 +1,12 @@
 package com.constructionnote.constructionnote.controller;
 
-import com.constructionnote.constructionnote.api.response.ConstructionRes;
+import com.constructionnote.constructionnote.api.request.UserProfileReq;
 import com.constructionnote.constructionnote.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +28,16 @@ public class UserController {
     public ResponseEntity<?> exist(@PathVariable("userid") String userId) {
         try {
             return new ResponseEntity<>(userService.exist(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@RequestPart(value = "userProfileReq") UserProfileReq userProfileReq, @RequestPart(value = "image", required = false) MultipartFile image) {
+        try {
+            userService.updateUserProfile(userProfileReq, image);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }

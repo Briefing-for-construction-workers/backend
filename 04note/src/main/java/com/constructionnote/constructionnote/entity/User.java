@@ -39,8 +39,15 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<Review> reviewList = new ArrayList<>();
 
-    @Builder
+    @Builder(builderMethodName = "builder1", buildMethodName = "build1")
     public User(String id) {
         this.id = id;
+    }
+
+    @Builder(builderMethodName = "builder2",  buildMethodName = "build2")
+    public User(String id, String nickname, String profileUrl) {
+        this.id = id;
+        this.nickname = nickname;
+        this.profileUrl = profileUrl;
     }
 }

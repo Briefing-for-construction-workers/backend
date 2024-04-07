@@ -15,3 +15,12 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+
+#file path
+file:
+  dir: ./images
