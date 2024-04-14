@@ -1,6 +1,7 @@
 package com.constructionnote.constructionnote.service;
 
 import com.constructionnote.constructionnote.api.request.UserProfileReq;
+import com.constructionnote.constructionnote.api.response.UserProfileRes;
 import com.constructionnote.constructionnote.component.ImageFileStore;
 import com.constructionnote.constructionnote.entity.User;
 import com.constructionnote.constructionnote.repository.UserRepository;
@@ -51,8 +52,21 @@ public class UserServiceImpl implements UserService {
                 .profileUrl(storeFilename)
                 .build2();
 
-
-
         userRepository.save(user);
+    }
+
+    @Override
+    public UserProfileRes getUserProfile(String userId) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        String profileUrl = user.getProfileUrl();
+
+        byte[] image = imageFileStore.getFile(profileUrl);
+
+        return UserProfileRes.builder()
+                .nickname(user.getNickname())
+                .image(image)
+                .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.constructionnote.constructionnote.controller;
 
 import com.constructionnote.constructionnote.api.request.UserProfileReq;
+import com.constructionnote.constructionnote.api.response.UserProfileRes;
 import com.constructionnote.constructionnote.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,15 @@ public class UserController {
         try {
             userService.updateUserProfile(userProfileReq, image);
             return new ResponseEntity<>("success", HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @GetMapping("/profile/{userid}")
+    public ResponseEntity<?> getProfile(@PathVariable("userid") String userId) {
+        try {
+            return new ResponseEntity<UserProfileRes>(userService.getUserProfile(userId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
