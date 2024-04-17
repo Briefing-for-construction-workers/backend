@@ -1,9 +1,15 @@
 package com.constructionnote.constructionnote.service;
 
 import com.constructionnote.constructionnote.api.request.UserProfileReq;
+import com.constructionnote.constructionnote.api.request.UserSignupReq;
 import com.constructionnote.constructionnote.api.response.UserProfileRes;
 import com.constructionnote.constructionnote.component.ImageFileStore;
+import com.constructionnote.constructionnote.entity.Profile;
+import com.constructionnote.constructionnote.entity.Skill;
 import com.constructionnote.constructionnote.entity.User;
+import com.constructionnote.constructionnote.entity.UserSkill;
+import com.constructionnote.constructionnote.repository.ProfileRepository;
+import com.constructionnote.constructionnote.repository.SkillRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +25,47 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
+    private final SkillRepository skillRepository;
     private final ImageFileStore imageFileStore;
 
     @Override
-    public void signUp(String userId) {
-        User user = User.builder1()
-                .id(userId)
-                .build1();
+    public void signUp(UserSignupReq userSignupReq, MultipartFile image) throws IOException {
+        User user = User.builder()
+                .id(userSignupReq.getUserId())
+                .address(userSignupReq.getAddress())
+                .level(userSignupReq.getLevel())
+                .build();
+
+        String storeFilename = imageFileStore.storeFile(image);
+
+        Profile profile = Profile.builder()
+                .nickname(userSignupReq.getNickname())
+                .imageUrl(storeFilename)
+                .build();
+
+        user.putProfile(profile);
+
+        if(userSignupReq.getSkills() != null) {
+            for(String skillName : userSignupReq.getSkills()) {
+                Skill skill = skillRepository.findByName(skillName).orElse(null);
+
+                if(skill == null) { //Skill 테이블에 없으면 해당 스킬 저장
+                    Skill skillTmp = Skill.builder()
+                            .name(skillName)
+                            .build();
+
+                    skill = skillRepository.save(skillTmp);
+                }
+
+                UserSkill userSkill = UserSkill.builder()
+                        .user(user)
+                        .skill(skill)
+                        .build();
+
+                user.addUserSkill(userSkill);
+            }
+        }
 
         userRepository.save(user);
     }
@@ -38,20 +78,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserProfile(UserProfileReq userProfileReq, MultipartFile image) throws IOException {
-        String id = userProfileReq.getUserId();
-        String nickname = userProfileReq.getNickname();
+        String userId = userProfileReq.getUserId();
 
-        System.out.println("id: " + id);
-        System.out.println("nickname: " + nickname);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
         String storeFilename = imageFileStore.storeFile(image);
 
-        User user = User.builder2()
-                .id(id)
-                .nickname(nickname)
-                .profileUrl(storeFilename)
-                .build2();
+        Profile profile = Profile.builder()
+                .nickname(userProfileReq.getNickname())
+                .imageUrl(storeFilename)
+                .build();
 
+        profileRepository.save(profile);
+        user.putProfile(profile);
         userRepository.save(user);
     }
 
@@ -60,12 +100,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        String profileUrl = user.getProfileUrl();
+        String profileUrl = user.getProfile().getImageUrl();
 
         byte[] image = imageFileStore.getFile(profileUrl);
 
         return UserProfileRes.builder()
-                .nickname(user.getNickname())
+                .nickname(user.getProfile().getNickname())
                 .image(image)
                 .build();
     }
