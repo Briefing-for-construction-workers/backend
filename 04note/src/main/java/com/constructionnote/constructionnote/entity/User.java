@@ -16,8 +16,15 @@ public class User {
     @Id
     @Column(name = "user_id")
     private String id;
-    private String nickname;
-    private String profileUrl;
+    private String address;
+    private String level;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserSkill> userSkillList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Construction> constructionList = new ArrayList<>();
@@ -31,25 +38,20 @@ public class User {
 
     @OneToMany
     @JoinColumn(name = "user_id")
-    private List<Career> careerList = new ArrayList<>();
-
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private List<Skill> skillList = new ArrayList<>();
-
-    @OneToMany
-    @JoinColumn(name = "user_id")
     private List<Review> reviewList = new ArrayList<>();
 
-    @Builder(builderMethodName = "builder1", buildMethodName = "build1")
-    public User(String id) {
+    @Builder
+    public User(String id, String address, String level) {
         this.id = id;
+        this.address = address;
+        this.level = level;
     }
 
-    @Builder(builderMethodName = "builder2",  buildMethodName = "build2")
-    public User(String id, String nickname, String profileUrl) {
-        this.id = id;
-        this.nickname = nickname;
-        this.profileUrl = profileUrl;
+    public void putProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public void addUserSkill(UserSkill userSkill) {
+        this.userSkillList.add(userSkill);
     }
 }

@@ -1,6 +1,7 @@
 package com.constructionnote.constructionnote.controller;
 
 import com.constructionnote.constructionnote.api.request.UserProfileReq;
+import com.constructionnote.constructionnote.api.request.UserSignupReq;
 import com.constructionnote.constructionnote.api.response.UserProfileRes;
 import com.constructionnote.constructionnote.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/{userid}")
-    public ResponseEntity<?> signup(@PathVariable("userid") String userId) {
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestPart(value = "userSignupReq") UserSignupReq userSignupReq, @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
-            userService.signUp(userId);
+            userService.signUp(userSignupReq, image);
             return new ResponseEntity<>("success", HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
