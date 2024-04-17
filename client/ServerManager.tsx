@@ -16,8 +16,9 @@ export async function postConstruction(data) {
 
 function convertConstruction(data) {
     const newData = {
-        "userId" : userId,
-        "kind" : data.role,
+        //"userId" : userId,
+        "userId" : 1, //tmp
+        "kind" : 0, //tmp
         "schedule" : data.schedule,
         "constructionSite" : data.constructionSite,
         "memo" : data.memo,
