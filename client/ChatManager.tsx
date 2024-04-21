@@ -30,6 +30,24 @@ export async function loadChatDB() {
     }
 }
 
+/*
+* firebase 계정 생성 단계에서 실행하여 최초 문서 설정
+*
+*/
+export async function chatInitialize() {
+    //create userChats
+    try {
+        await firestore().collection('userChats').doc(userId).set({
+            "chatRoomNamesh" : [],
+        });
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/*
+* 매 애플리케이션 실행시 실행하여 로컬에 저장된 DB보다 업데이트된 정보가 있을 경우 이 정보를 내려받음.
+*/
 export async function updateChatDB() {
     //update previous chatrooms
     for (let room of myChatDB.chatRooms) {
@@ -40,11 +58,7 @@ export async function updateChatDB() {
                 if (docSnapshot.exists) {
                     console.log("Document read successfully!");
                     const data = docSnapshot.data();
-                    if(data.topChatId != room.topChatId) {
-                        //need update
-                        room.messages = data.messages;
-                        room.topChatId = data.topChatId;
-                    }
+                    updateChatRoom(room,data);
                 } else {
                     console.error("chatroom doesn't exist");
                 }
@@ -59,36 +73,46 @@ export async function updateChatDB() {
 
         if(docSnapshot.exists) {
             const data = docSnapshot.data();
-            const nameList = data.chatRoomNames;
-            for(let name of nameList) {
-                if(!myChatDB.chatRooms.some(room => room.chatRoomName === name)) {
-                    //must add
-                    try{
-                        const docRef2 = firestore().collection('chats').doc(name);
-                        const docSnapshot2 = await docRef2.get();
-                        if(docSnapshot2.exists) {
-                            const data2 = docSnapshot2.data();
-                            let newChatRoom : chatRoom = {
-                                "chatRoomName" : data2.chatRoomName,
-                                "opponentId" : getOpponentId(data2.chatRoomName),
-                                "topChatId" : data2.topChatId,
-                                "messages" : data2.messages,
-                            }
-                            myChatDB.chatRooms.push(newChatRoom);
-                        }
-                    } catch(error) {
-                        console.error(error);
-                    }
-                }
-            }
+            addNewChatRoom(data);
         } else {
             console.error("UserChat document doesn't exist");
         }
     } catch(error) {
         console.error("Error reading document:", error);
     }
-
 }
+
+/*
+* 애플리케이션 초기화 단계에서 updateChatDB 이후에 실행하여 문서 변경사항 감지
+*/
+export async function subscribeUserChats() {
+    //subscribe userChats
+    const unsubscribeUserChats = firestore().collection("userChats").doc(userId).onSnapshot((doc) => {
+        if(doc.exists) {
+            const data = doc.data();
+            addNewChatRoom(data);
+        } else {
+            console.error("subscribe error");
+        }
+    });
+}
+
+/*
+* 애플리케이션 초기화 단계에서 updateChatDB 이후 모든 채팅방을 구독
+*/
+export async function subscribeChats() {
+    for(let room of myChatDB.chatRooms) {
+        const unused = firestore().collection("Chats").doc(room.chatRoomName).onSnapshot((doc) => {
+            if(doc.exists) {
+                const data = doc.data();
+                updateChatRoom(room,data);
+            } else {
+                console.error("error in subscribeChats");
+            }
+        });
+    }
+}
+
 export async function createNewChat(opponentId : string) {
     const newChatRoomName = createChatRoomName(userId,opponentId);
     //create chat room
@@ -118,10 +142,11 @@ export async function createNewChat(opponentId : string) {
         console.error(error);
     }
 }
+
 export async function sendChat(opponentId : string, message : string) {
     //서버에만 전송하고, 로컬DB에 반영하지않음. 로컬DB에는 자동적으로 네트워킹을 통해 반영될 것임
     for(let room of chatDB.chatRooms) {
-        if(room.opponentId == opponentId) {
+        if(getOpponentId(room.chatRoomName) == opponentId) {
             const docRef = firestore().collection('chats').doc(room.chatRoomName);
             const newMessage = {
                 "chatId" : room.topChatId+1,
@@ -156,7 +181,6 @@ interface chatMessage {
 }
 interface chatRoom {
     "chatRoomName" : string,
-    "opponentId" : string,
     "topChatId" : number,
     "messages" : chatMessage[],
 }
@@ -178,6 +202,46 @@ function getOpponentId(chatRoomName : string): string {
     const ids = chatRoomName.split('_');
     if(ids[0] === userId) return ids[1];
     else return ids[0];
+}
+
+function addNewChatRoom(data) {
+    const nameList = data.chatRoomNames;
+    for(let name of nameList) {
+        if(!myChatDB.chatRooms.some(room => room.chatRoomName === name)) {
+            //must add
+            try{
+                const docRef2 = firestore().collection('chats').doc(name);
+                const docSnapshot2 = await docRef2.get();
+                if(docSnapshot2.exists) {
+                    const data2 = docSnapshot2.data();
+                    let newChatRoom : chatRoom = {
+                        "chatRoomName" : data2.chatRoomName,
+                        "topChatId" : data2.topChatId,
+                        "messages" : data2.messages,
+                    }
+                    myChatDB.chatRooms.push(newChatRoom);
+                    const unused = firestore().collection('chats').doc(name).onSnapshot((doc) => {
+                        if(doc.exists) {
+                            data = doc.data();
+                            updateChatRoom(newChatRoom,data);
+                        } else {
+                            console.error("error in addNewChatRoom");
+                        }
+                    });
+                }
+            } catch(error) {
+                console.error(error);
+            }
+        }
+    }
+}
+
+function updateChatRoom(room, data) {
+    if(data.topChatId != room.topChatId) {
+        //need update
+        room.messages = data.messages;
+        room.topChatId = data.topChatId;
+    }
 }
 /* test functions */
 
