@@ -29,12 +29,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Construction> constructionList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<SeekingPost> seekingPostList = new ArrayList<>();
+
     @OneToMany
     @JoinColumn(name = "user_id")
     private List<Friend> friendList = new ArrayList<>();
-
-    @OneToOne(mappedBy = "user")
-    private SeekingPost seekingPost;
 
     @OneToMany
     @JoinColumn(name = "user_id")
