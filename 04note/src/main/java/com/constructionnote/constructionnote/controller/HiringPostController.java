@@ -1,5 +1,6 @@
 package com.constructionnote.constructionnote.controller;
 
+import com.constructionnote.constructionnote.api.request.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.HiringPostReq;
 import com.constructionnote.constructionnote.api.response.HiringPostDetailRes;
 import com.constructionnote.constructionnote.service.HiringPostService;
@@ -28,6 +29,16 @@ public class HiringPostController {
     public ResponseEntity<?> view(@PathVariable("hiringpostid") Long hiringPostId) {
         try {
             return new ResponseEntity<HiringPostDetailRes>(hiringPostService.viewHiringPostById(hiringPostId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @PostMapping("/like")
+    public ResponseEntity<?> like(@RequestBody HiringPostLikeReq hiringPostLikeReq) {
+        try {
+            Long hiringLikeId = hiringPostService.likeHiringPost(hiringPostLikeReq);
+            return new ResponseEntity<>(hiringLikeId, HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
         }

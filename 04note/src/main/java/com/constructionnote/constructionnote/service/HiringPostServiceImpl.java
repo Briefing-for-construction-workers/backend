@@ -1,13 +1,16 @@
 package com.constructionnote.constructionnote.service;
 
+import com.constructionnote.constructionnote.api.request.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.HiringPostReq;
 import com.constructionnote.constructionnote.api.response.HiringPostDetailRes;
 import com.constructionnote.constructionnote.component.ImageFileStore;
 import com.constructionnote.constructionnote.dto.user.HiringPostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
+import com.constructionnote.constructionnote.entity.HiringLike;
 import com.constructionnote.constructionnote.entity.HiringPost;
 import com.constructionnote.constructionnote.entity.User;
 import com.constructionnote.constructionnote.entity.UserSkill;
+import com.constructionnote.constructionnote.repository.HiringLikeRepository;
 import com.constructionnote.constructionnote.repository.HiringPostRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -25,6 +28,7 @@ import java.util.List;
 public class HiringPostServiceImpl implements HiringPostService {
     private final UserRepository userRepository;
     private final HiringPostRepository hiringPostRepository;
+    private final HiringLikeRepository hiringLikeRepository;
     private final ImageFileStore imageFileStore;
 
     @Override
@@ -85,5 +89,27 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .kind("구인")
                 .hiringPostDto(hiringPostDto)
                 .build();
+    }
+
+    @Override
+    public Long likeHiringPost(HiringPostLikeReq hiringPostLikeReq) {
+        User user = userRepository.findById(hiringPostLikeReq.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        HiringPost hiringPost = hiringPostRepository.findById(hiringPostLikeReq.getHiringPostId())
+                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+
+        Date currentDate = new Date();
+        Timestamp timestamp = new Timestamp(currentDate.getTime());
+
+        HiringLike hiringLike = HiringLike.builder()
+                .createdAt(timestamp)
+                .user(user)
+                .hiringPost(hiringPost)
+                .build();
+
+        hiringLikeRepository.save(hiringLike);
+
+        return hiringLike.getId();
     }
 }

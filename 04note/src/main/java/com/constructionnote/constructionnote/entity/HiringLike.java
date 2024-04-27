@@ -2,6 +2,7 @@ package com.constructionnote.constructionnote.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,10 @@ public class HiringLike {
     @JoinColumn(name = "hiring_post_id")
     private HiringPost hiringPost;
 
+    @Builder
+    public HiringLike(Timestamp createdAt, User user, HiringPost hiringPost) {
+        this.createdAt = createdAt;
+        this.user = user;
+        this.hiringPost = hiringPost;
+    }
 }
