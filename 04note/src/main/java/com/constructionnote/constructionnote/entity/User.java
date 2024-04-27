@@ -32,6 +32,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<SeekingPost> seekingPostList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "employer")
+    private List<HiringPost> hiringPostList = new ArrayList<>();
+
     @OneToMany
     @JoinColumn(name = "user_id")
     private List<Friend> friendList = new ArrayList<>();
