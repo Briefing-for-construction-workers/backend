@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,6 +31,9 @@ public class HiringPost {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User employer;
+
+    @OneToMany(mappedBy = "hiringPost")
+    private List<HiringPostApply> hiringPostApplyList = new ArrayList<>();
 
     @Builder
     public HiringPost(String title, Date date, String location, String level, String skill, Integer pay, String content, Timestamp createdAt, boolean state, User employer) {
