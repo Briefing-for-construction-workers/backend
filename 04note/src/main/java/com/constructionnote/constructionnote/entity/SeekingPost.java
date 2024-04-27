@@ -17,19 +17,22 @@ public class SeekingPost {
     private Long id;
     private String title;
     private String content;
-    private Integer pay;
-    private Timestamp regDate;
+    private Timestamp createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToOne
+    @JoinColumn(name = "construction_id")
+    private Construction construction;
+
     @Builder
-    public SeekingPost(String title, String content, Integer pay, Timestamp regDate, User user) {
+    public SeekingPost(String title, String content, Timestamp createdAt, User user, Construction construction) {
         this.title = title;
         this.content = content;
-        this.pay = pay;
-        this.regDate = regDate;
+        this.createdAt = createdAt;
         this.user = user;
+        this.construction = construction;
     }
 }

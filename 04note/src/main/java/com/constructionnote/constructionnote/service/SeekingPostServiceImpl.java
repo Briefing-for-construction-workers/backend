@@ -1,8 +1,10 @@
 package com.constructionnote.constructionnote.service;
 
 import com.constructionnote.constructionnote.api.request.SeekingPostReq;
+import com.constructionnote.constructionnote.entity.Construction;
 import com.constructionnote.constructionnote.entity.SeekingPost;
 import com.constructionnote.constructionnote.entity.User;
+import com.constructionnote.constructionnote.repository.ConstructionRepository;
 import com.constructionnote.constructionnote.repository.SeekingPostRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -17,6 +19,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class SeekingPostServiceImpl implements SeekingPostService {
     private final UserRepository userRepository;
+    private final ConstructionRepository constructionRepository;
     private final SeekingPostRepository seekingPostRepository;
 
     @Override
@@ -24,15 +27,18 @@ public class SeekingPostServiceImpl implements SeekingPostService {
         User user = userRepository.findById(seekingPostReq.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
+        Construction construction = constructionRepository.findById(seekingPostReq.getConstructionId())
+                .orElseThrow(() -> new IllegalArgumentException("construction doesn't exist"));
+
         Date currentDate = new Date();
         Timestamp timestamp = new Timestamp(currentDate.getTime());
 
         SeekingPost seekingPost = SeekingPost.builder()
                 .title(seekingPostReq.getTitle())
                 .content(seekingPostReq.getContent())
-                .pay(seekingPostReq.getPay())
-                .regDate(timestamp)
+                .createdAt(timestamp)
                 .user(user)
+                .construction(construction)
                 .build();
 
         seekingPostRepository.save(seekingPost);

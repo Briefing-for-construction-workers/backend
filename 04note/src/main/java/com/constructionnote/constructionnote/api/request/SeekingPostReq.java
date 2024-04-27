@@ -7,5 +7,5 @@ public class SeekingPostReq {
     private String userId;
     private String title;
     private String content;
-    private Integer pay;
+    private Long constructionId;
 }
