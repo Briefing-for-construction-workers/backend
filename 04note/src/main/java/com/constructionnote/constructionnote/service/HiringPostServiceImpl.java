@@ -1,16 +1,15 @@
 package com.constructionnote.constructionnote.service;
 
+import com.constructionnote.constructionnote.api.request.HiringPostApplyReq;
 import com.constructionnote.constructionnote.api.request.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.HiringPostReq;
 import com.constructionnote.constructionnote.api.response.HiringPostDetailRes;
 import com.constructionnote.constructionnote.component.ImageFileStore;
 import com.constructionnote.constructionnote.dto.user.HiringPostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
-import com.constructionnote.constructionnote.entity.HiringLike;
-import com.constructionnote.constructionnote.entity.HiringPost;
-import com.constructionnote.constructionnote.entity.User;
-import com.constructionnote.constructionnote.entity.UserSkill;
+import com.constructionnote.constructionnote.entity.*;
 import com.constructionnote.constructionnote.repository.HiringLikeRepository;
+import com.constructionnote.constructionnote.repository.HiringPostApplyRepository;
 import com.constructionnote.constructionnote.repository.HiringPostRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -29,6 +28,7 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final UserRepository userRepository;
     private final HiringPostRepository hiringPostRepository;
     private final HiringLikeRepository hiringLikeRepository;
+    private final HiringPostApplyRepository hiringPostApplyRepository;
     private final ImageFileStore imageFileStore;
 
     @Override
@@ -111,5 +111,28 @@ public class HiringPostServiceImpl implements HiringPostService {
         hiringLikeRepository.save(hiringLike);
 
         return hiringLike.getId();
+    }
+
+    @Override
+    public Long applyHiringPost(HiringPostApplyReq hiringPostApplyReq) {
+        User user = userRepository.findById(hiringPostApplyReq.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        HiringPost hiringPost = hiringPostRepository.findById(hiringPostApplyReq.getHiringPostId())
+                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+
+        Date currentDate = new Date();
+        Timestamp timestamp = new Timestamp(currentDate.getTime());
+
+        HiringPostApply hiringPostApply = HiringPostApply.builder()
+                .isHired(false)
+                .createdAt(timestamp)
+                .user(user)
+                .hiringPost(hiringPost)
+                .build();
+
+        hiringPostApplyRepository.save(hiringPostApply);
+
+        return hiringPostApply.getId();
     }
 }

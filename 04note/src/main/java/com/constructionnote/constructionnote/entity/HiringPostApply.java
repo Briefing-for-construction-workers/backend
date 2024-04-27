@@ -2,6 +2,7 @@ package com.constructionnote.constructionnote.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,12 @@ public class HiringPostApply {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hiring_post_id")
     private HiringPost hiringPost;
+
+    @Builder
+    public HiringPostApply(boolean isHired, Timestamp createdAt, User user, HiringPost hiringPost) {
+        this.isHired = isHired;
+        this.createdAt = createdAt;
+        this.user = user;
+        this.hiringPost = hiringPost;
+    }
 }
