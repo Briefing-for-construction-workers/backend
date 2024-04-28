@@ -3,9 +3,7 @@ package com.constructionnote.constructionnote.api.request;
 import lombok.Getter;
 
 @Getter
-public class SeekingPostReq {
+public class HiringPostApplyReq {
     private String userId;
-    private String title;
-    private String content;
-    private Long constructionId;
+    private Long hiringPostId;
 }

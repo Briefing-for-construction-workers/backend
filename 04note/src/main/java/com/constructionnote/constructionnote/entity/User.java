@@ -32,13 +32,26 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<SeekingPost> seekingPostList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "employer")
+    private List<HiringPost> hiringPostList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<HiringLike> hiringLikeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<HiringPostApply> hiringPostApplyList = new ArrayList<>();
+
     @OneToMany
     @JoinColumn(name = "user_id")
     private List<Friend> friendList = new ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "user_id")
-    private List<Review> reviewList = new ArrayList<>();
+    @JoinColumn(name = "reviewer_id")
+    private List<HiringReview> hiringReviewerList = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "reviewee_id")
+    private List<HiringReview> hiringRevieweeList = new ArrayList<>();
 
     @Builder
     public User(String id, String address, String level) {

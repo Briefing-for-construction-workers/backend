@@ -11,28 +11,26 @@ import java.sql.Timestamp;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class SeekingPost {
+public class HiringPostApply {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "seeking_post_id")
+    @Column(name = "hiring_post_apply_id")
     private Long id;
-    private String title;
-    private String content;
+    private boolean isHired;
     private Timestamp createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
-    @JoinColumn(name = "construction_id")
-    private Construction construction;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hiring_post_id")
+    private HiringPost hiringPost;
 
     @Builder
-    public SeekingPost(String title, String content, Timestamp createdAt, User user, Construction construction) {
-        this.title = title;
-        this.content = content;
+    public HiringPostApply(boolean isHired, Timestamp createdAt, User user, HiringPost hiringPost) {
+        this.isHired = isHired;
         this.createdAt = createdAt;
         this.user = user;
-        this.construction = construction;
+        this.hiringPost = hiringPost;
     }
 }
