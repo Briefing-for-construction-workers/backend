@@ -2,6 +2,7 @@ package com.constructionnote.constructionnote.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,13 @@ public class HiringReview {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hiring_post_id")
     private HiringPost hiringPost;
+
+    @Builder
+    public HiringReview(String content, Timestamp createdAt, User reviewer, User reviewee, HiringPost hiringPost) {
+        this.content = content;
+        this.createdAt = createdAt;
+        this.reviewer = reviewer;
+        this.reviewee = reviewee;
+        this.hiringPost = hiringPost;
+    }
 }

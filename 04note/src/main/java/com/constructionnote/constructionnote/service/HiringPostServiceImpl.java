@@ -3,15 +3,13 @@ package com.constructionnote.constructionnote.service;
 import com.constructionnote.constructionnote.api.request.HiringPostApplyReq;
 import com.constructionnote.constructionnote.api.request.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.HiringPostReq;
+import com.constructionnote.constructionnote.api.request.HiringReviewReq;
 import com.constructionnote.constructionnote.api.response.HiringPostDetailRes;
 import com.constructionnote.constructionnote.component.ImageFileStore;
 import com.constructionnote.constructionnote.dto.user.HiringPostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
 import com.constructionnote.constructionnote.entity.*;
-import com.constructionnote.constructionnote.repository.HiringLikeRepository;
-import com.constructionnote.constructionnote.repository.HiringPostApplyRepository;
-import com.constructionnote.constructionnote.repository.HiringPostRepository;
-import com.constructionnote.constructionnote.repository.UserRepository;
+import com.constructionnote.constructionnote.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +27,7 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final HiringPostRepository hiringPostRepository;
     private final HiringLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
+    private final HiringReviewRepository hiringReviewRepository;
     private final ImageFileStore imageFileStore;
 
     @Override
@@ -134,5 +133,32 @@ public class HiringPostServiceImpl implements HiringPostService {
         hiringPostApplyRepository.save(hiringPostApply);
 
         return hiringPostApply.getId();
+    }
+
+    @Override
+    public Long createHiringReview(HiringReviewReq hiringReviewReq) {
+        User reviewer = userRepository.findById(hiringReviewReq.getReviewerId())
+                .orElseThrow(() -> new IllegalArgumentException("reviewer doesn't exist"));
+
+        User reviewee = userRepository.findById(hiringReviewReq.getRevieweeId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        HiringPost hiringPost = hiringPostRepository.findById(hiringReviewReq.getHiringPostId())
+                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+
+        Date currentDate = new Date();
+        Timestamp timestamp = new Timestamp(currentDate.getTime());
+
+        HiringReview hiringReview = HiringReview.builder()
+                .content(hiringReviewReq.getContent())
+                .createdAt(timestamp)
+                .reviewer(reviewer)
+                .reviewee(reviewee)
+                .hiringPost(hiringPost)
+                .build();
+
+        hiringReviewRepository.save(hiringReview);
+
+        return hiringReview.getId();
     }
 }

@@ -3,6 +3,7 @@ package com.constructionnote.constructionnote.service;
 import com.constructionnote.constructionnote.api.request.HiringPostApplyReq;
 import com.constructionnote.constructionnote.api.request.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.HiringPostReq;
+import com.constructionnote.constructionnote.api.request.HiringReviewReq;
 import com.constructionnote.constructionnote.api.response.HiringPostDetailRes;
 
 public interface HiringPostService {
@@ -12,4 +13,6 @@ public interface HiringPostService {
     Long likeHiringPost(HiringPostLikeReq hiringPostLikeReq);
 
     Long applyHiringPost(HiringPostApplyReq hiringPostApplyReq);
+
+    Long createHiringReview(HiringReviewReq hiringReviewReq);
 }
