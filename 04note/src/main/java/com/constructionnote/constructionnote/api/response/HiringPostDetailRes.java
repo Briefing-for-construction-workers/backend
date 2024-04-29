@@ -1,6 +1,6 @@
 package com.constructionnote.constructionnote.api.response;
 
-import com.constructionnote.constructionnote.dto.user.HiringPostDto;
+import com.constructionnote.constructionnote.dto.post.HiringPostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
 import lombok.AccessLevel;
 import lombok.Builder;

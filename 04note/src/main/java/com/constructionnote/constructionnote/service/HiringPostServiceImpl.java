@@ -6,7 +6,7 @@ import com.constructionnote.constructionnote.api.request.HiringPostReq;
 import com.constructionnote.constructionnote.api.request.HiringReviewReq;
 import com.constructionnote.constructionnote.api.response.HiringPostDetailRes;
 import com.constructionnote.constructionnote.component.ImageFileStore;
-import com.constructionnote.constructionnote.dto.user.HiringPostDto;
+import com.constructionnote.constructionnote.dto.post.HiringPostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
 import com.constructionnote.constructionnote.entity.*;
 import com.constructionnote.constructionnote.repository.*;
@@ -75,6 +75,7 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .build();
 
         HiringPostDto hiringPostDto = HiringPostDto.builder()
+                .title(hiringPost.getTitle())
                 .skill(hiringPost.getSkill())
                 .location(hiringPost.getLocation())
                 .date(hiringPost.getDate())
