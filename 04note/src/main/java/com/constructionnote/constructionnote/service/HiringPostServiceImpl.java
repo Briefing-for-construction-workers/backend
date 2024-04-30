@@ -48,7 +48,7 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .content(hiringPostReq.getContent())
                 .createdAt(timestamp)
                 .state(false)
-                .employer(user)
+                .user(user)
                 .build();
 
         hiringPostRepository.save(hiringPost);
@@ -60,21 +60,21 @@ public class HiringPostServiceImpl implements HiringPostService {
         HiringPost hiringPost = hiringPostRepository.findById(hiringPostId)
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
-        String profileUrl = hiringPost.getEmployer().getProfile().getImageUrl();
+        String profileUrl = hiringPost.getUser().getProfile().getImageUrl();
 
         byte[] image = null;
         if(profileUrl != null) {
             image = imageFileStore.getFile(profileUrl);
         }
 
-        List<UserSkill> userSkillList = hiringPost.getEmployer().getUserSkillList();
+        List<UserSkill> userSkillList = hiringPost.getUser().getUserSkillList();
         List<String> skills  = new ArrayList<>();
         for(UserSkill userSkill : userSkillList) {
             skills.add(userSkill.getSkill().getName());
         }
 
         ProfileDto profileDto = ProfileDto.builder()
-                .nickname(hiringPost.getEmployer().getProfile().getNickname())
+                .nickname(hiringPost.getUser().getProfile().getNickname())
                 .image(image)
                 .skills(skills)
                 .build();

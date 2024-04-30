@@ -14,10 +14,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@DiscriminatorValue("hiring")
 public class HiringPost extends Post {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hiring_post_id")
-    private Long id;
     private Date date;
     private String location;
     private String level;
@@ -25,15 +23,11 @@ public class HiringPost extends Post {
     private Integer pay;
     private boolean state;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User employer;
-
     @OneToMany(mappedBy = "hiringPost")
     private List<HiringPostApply> hiringPostApplyList = new ArrayList<>();
 
     @Builder
-    public HiringPost(String title, Date date, String location, String level, String skill, Integer pay, String content, Timestamp createdAt, boolean state, User employer) {
+    public HiringPost(String title, Date date, String location, String level, String skill, Integer pay, String content, Timestamp createdAt, boolean state, User user) {
         setTitle(title);
         this.date = date;
         this.location = location;
@@ -43,6 +37,8 @@ public class HiringPost extends Post {
         setContent(content);
         setCreatedAt(createdAt);
         this.state = state;
-        this.employer = employer;
+        setUser(user);
     }
+
+
 }

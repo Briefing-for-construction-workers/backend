@@ -13,10 +13,6 @@ import java.sql.Timestamp;
 @Entity
 @DiscriminatorValue("seeking")
 public class SeekingPost extends Post {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @OneToOne
     @JoinColumn(name = "construction_id")
     private Construction construction;
@@ -26,7 +22,7 @@ public class SeekingPost extends Post {
         setTitle(title);
         setContent(content);
         setCreatedAt(createdAt);
-        this.user = user;
+        setUser(user);
         this.construction = construction;
     }
 }

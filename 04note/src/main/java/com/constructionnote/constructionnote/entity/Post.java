@@ -2,7 +2,6 @@ package com.constructionnote.constructionnote.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,4 +22,9 @@ public abstract class Post {
     private String content;
     @Setter(AccessLevel.PROTECTED)
     private Timestamp createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @Setter(AccessLevel.PROTECTED)
+    private User user;
 }
