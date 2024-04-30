@@ -37,7 +37,10 @@ public class UserServiceImpl implements UserService {
                 .level(userSignupReq.getLevel())
                 .build();
 
-        String storeFilename = imageFileStore.storeFile(image);
+        String storeFilename = null;
+        if(image != null) {
+            storeFilename = imageFileStore.storeFile(image);
+        }
 
         Profile profile = Profile.builder()
                 .nickname(userSignupReq.getNickname())
@@ -102,7 +105,10 @@ public class UserServiceImpl implements UserService {
 
         String profileUrl = user.getProfile().getImageUrl();
 
-        byte[] image = imageFileStore.getFile(profileUrl);
+        byte[] image = null;
+        if(profileUrl != null) {
+            image = imageFileStore.getFile(profileUrl);
+        }
 
         return UserProfileRes.builder()
                 .nickname(user.getProfile().getNickname())

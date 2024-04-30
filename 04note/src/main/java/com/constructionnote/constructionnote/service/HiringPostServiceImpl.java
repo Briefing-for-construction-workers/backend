@@ -60,7 +60,12 @@ public class HiringPostServiceImpl implements HiringPostService {
         HiringPost hiringPost = hiringPostRepository.findById(hiringPostId)
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
-        byte[] image = imageFileStore.getFile(hiringPost.getEmployer().getProfile().getImageUrl());
+        String profileUrl = hiringPost.getEmployer().getProfile().getImageUrl();
+
+        byte[] image = null;
+        if(profileUrl != null) {
+            image = imageFileStore.getFile(profileUrl);
+        }
 
         List<UserSkill> userSkillList = hiringPost.getEmployer().getUserSkillList();
         List<String> skills  = new ArrayList<>();
