@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Entity
 @DiscriminatorValue("seeking")
 public class SeekingPost extends Post {
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "construction_id")
     private Construction construction;
 
