@@ -11,28 +11,18 @@ import java.sql.Timestamp;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class SeekingPost {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "seeking_post_id")
-    private Long id;
-    private String title;
-    private String content;
-    private Timestamp createdAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @OneToOne
+@DiscriminatorValue("seeking")
+public class SeekingPost extends Post {
+    @ManyToOne
     @JoinColumn(name = "construction_id")
     private Construction construction;
 
     @Builder
     public SeekingPost(String title, String content, Timestamp createdAt, User user, Construction construction) {
-        this.title = title;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.user = user;
+        setTitle(title);
+        setContent(content);
+        setCreatedAt(createdAt);
+        setUser(user);
         this.construction = construction;
     }
 }

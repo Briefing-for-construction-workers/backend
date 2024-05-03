@@ -30,10 +30,7 @@ public class User {
     private List<Construction> constructionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<SeekingPost> seekingPostList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "employer")
-    private List<HiringPost> hiringPostList = new ArrayList<>();
+    private List<Post> postList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<HiringLike> hiringLikeList = new ArrayList<>();

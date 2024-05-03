@@ -14,38 +14,34 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class HiringPost {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hiring_post_id")
-    private Long id;
-    private String title;
+@DiscriminatorValue("hiring")
+public class HiringPost extends Post {
     private Date date;
     private String location;
     private String level;
-    private String skill;
     private Integer pay;
-    private String content;
     private boolean state;
-    private Timestamp createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User employer;
+    @OneToMany(mappedBy = "hiringPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostSkill> postSkillList = new ArrayList<>();
 
     @OneToMany(mappedBy = "hiringPost")
     private List<HiringPostApply> hiringPostApplyList = new ArrayList<>();
 
     @Builder
-    public HiringPost(String title, Date date, String location, String level, String skill, Integer pay, String content, Timestamp createdAt, boolean state, User employer) {
-        this.title = title;
+    public HiringPost(String title, Date date, String location, String level, Integer pay, String content, Timestamp createdAt, boolean state, User user) {
+        setTitle(title);
         this.date = date;
         this.location = location;
         this.level = level;
-        this.skill = skill;
         this.pay = pay;
-        this.content = content;
-        this.createdAt = createdAt;
+        setContent(content);
+        setCreatedAt(createdAt);
         this.state = state;
-        this.employer = employer;
+        setUser(user);
+    }
+
+    public void addPostSkill(PostSkill postSkill) {
+        this.postSkillList.add(postSkill);
     }
 }
