@@ -3,7 +3,6 @@ package com.constructionnote.constructionnote.controller.community;
 import com.constructionnote.constructionnote.api.request.community.HiringPostApplyReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
-import com.constructionnote.constructionnote.api.request.community.HiringReviewReq;
 import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
 import com.constructionnote.constructionnote.service.community.HiringPostService;
 import lombok.RequiredArgsConstructor;
@@ -31,16 +30,6 @@ public class HiringPostController {
     public ResponseEntity<?> view(@PathVariable("hiringpostid") Long hiringPostId) {
         try {
             return new ResponseEntity<HiringPostDetailRes>(hiringPostService.viewHiringPostById(hiringPostId), HttpStatus.OK);
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
-    @PostMapping("/review")
-    public ResponseEntity<?> writeReview(@RequestBody HiringReviewReq hiringReviewReq) {
-        try {
-            Long hiringReviewId = hiringPostService.createHiringReview(hiringReviewReq);
-            return new ResponseEntity<>(hiringReviewId, HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
         }

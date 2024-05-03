@@ -13,6 +13,4 @@ public interface HiringPostService {
     Long likeHiringPost(HiringPostLikeReq hiringPostLikeReq);
 
     Long applyHiringPost(HiringPostApplyReq hiringPostApplyReq);
-
-    Long createHiringReview(HiringReviewReq hiringReviewReq);
 }

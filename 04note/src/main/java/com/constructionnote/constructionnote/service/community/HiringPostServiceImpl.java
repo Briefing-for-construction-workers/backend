@@ -3,7 +3,6 @@ package com.constructionnote.constructionnote.service.community;
 import com.constructionnote.constructionnote.api.request.community.HiringPostApplyReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
-import com.constructionnote.constructionnote.api.request.community.HiringReviewReq;
 import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
 import com.constructionnote.constructionnote.component.ImageFileStore;
 import com.constructionnote.constructionnote.dto.community.HiringPostDto;
@@ -27,7 +26,6 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final HiringPostRepository hiringPostRepository;
     private final HiringLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
-    private final HiringReviewRepository hiringReviewRepository;
     private final SkillRepository skillRepository;
     private final ImageFileStore imageFileStore;
 
@@ -168,30 +166,4 @@ public class HiringPostServiceImpl implements HiringPostService {
         return hiringPostApply.getId();
     }
 
-    @Override
-    public Long createHiringReview(HiringReviewReq hiringReviewReq) {
-        User reviewer = userRepository.findById(hiringReviewReq.getReviewerId())
-                .orElseThrow(() -> new IllegalArgumentException("reviewer doesn't exist"));
-
-        User reviewee = userRepository.findById(hiringReviewReq.getRevieweeId())
-                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
-
-        HiringPost hiringPost = hiringPostRepository.findById(hiringReviewReq.getHiringPostId())
-                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
-
-        Date currentDate = new Date();
-        Timestamp timestamp = new Timestamp(currentDate.getTime());
-
-        HiringReview hiringReview = HiringReview.builder()
-                .content(hiringReviewReq.getContent())
-                .createdAt(timestamp)
-                .reviewer(reviewer)
-                .reviewee(reviewee)
-                .hiringPost(hiringPost)
-                .build();
-
-        hiringReviewRepository.save(hiringReview);
-
-        return hiringReview.getId();
-    }
 }
