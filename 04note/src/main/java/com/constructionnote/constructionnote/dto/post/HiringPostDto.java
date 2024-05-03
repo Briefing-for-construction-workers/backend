@@ -6,12 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HiringPostDto {
     private String title;
-    private String skill;
+    private List<String> skills  = new ArrayList<>();
     private String location;
     private Date date;
     private String level;
@@ -19,9 +21,9 @@ public class HiringPostDto {
     private String content;
 
     @Builder
-    public HiringPostDto(String title, String skill, String location, Date date, String level, Integer pay, String content) {
+    public HiringPostDto(String title, List<String> skills, String location, Date date, String level, Integer pay, String content) {
         this.title = title;
-        this.skill = skill;
+        this.skills = skills;
         this.location = location;
         this.date = date;
         this.level = level;

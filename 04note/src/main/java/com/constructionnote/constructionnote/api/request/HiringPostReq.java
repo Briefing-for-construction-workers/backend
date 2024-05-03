@@ -3,6 +3,8 @@ package com.constructionnote.constructionnote.api.request;
 import lombok.Getter;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class HiringPostReq {
@@ -11,7 +13,7 @@ public class HiringPostReq {
     private Date date;
     private String location;
     private String level;
-    private String skill;
+    private List<String> skills  = new ArrayList<>();
     private Integer pay;
     private String content;
 }

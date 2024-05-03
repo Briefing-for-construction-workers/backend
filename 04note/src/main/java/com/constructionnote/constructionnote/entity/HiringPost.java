@@ -19,20 +19,21 @@ public class HiringPost extends Post {
     private Date date;
     private String location;
     private String level;
-    private String skill;
     private Integer pay;
     private boolean state;
+
+    @OneToMany(mappedBy = "hiringPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostSkill> postSkillList = new ArrayList<>();
 
     @OneToMany(mappedBy = "hiringPost")
     private List<HiringPostApply> hiringPostApplyList = new ArrayList<>();
 
     @Builder
-    public HiringPost(String title, Date date, String location, String level, String skill, Integer pay, String content, Timestamp createdAt, boolean state, User user) {
+    public HiringPost(String title, Date date, String location, String level, Integer pay, String content, Timestamp createdAt, boolean state, User user) {
         setTitle(title);
         this.date = date;
         this.location = location;
         this.level = level;
-        this.skill = skill;
         this.pay = pay;
         setContent(content);
         setCreatedAt(createdAt);
@@ -40,5 +41,7 @@ public class HiringPost extends Post {
         setUser(user);
     }
 
-
+    public void addPostSkill(PostSkill postSkill) {
+        this.postSkillList.add(postSkill);
+    }
 }

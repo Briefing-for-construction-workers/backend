@@ -28,6 +28,7 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final HiringLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
     private final HiringReviewRepository hiringReviewRepository;
+    private final SkillRepository skillRepository;
     private final ImageFileStore imageFileStore;
 
     @Override
@@ -43,13 +44,33 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .date(hiringPostReq.getDate())
                 .location(hiringPostReq.getLocation())
                 .level(hiringPostReq.getLevel())
-                .skill(hiringPostReq.getSkill())
                 .pay(hiringPostReq.getPay())
                 .content(hiringPostReq.getContent())
                 .createdAt(timestamp)
                 .state(false)
                 .user(user)
                 .build();
+
+        if(hiringPostReq.getSkills() != null) {
+            for(String skillName : hiringPostReq.getSkills()) {
+                Skill skill = skillRepository.findByName(skillName).orElse(null);
+
+                if(skill == null) {
+                    Skill skillTmp = Skill.builder()
+                            .name(skillName)
+                            .build();
+
+                    skill = skillRepository.save(skillTmp);
+                }
+
+                PostSkill postSkill = PostSkill.builder()
+                        .hiringPost(hiringPost)
+                        .skill(skill)
+                        .build();
+
+                hiringPost.addPostSkill(postSkill);
+            }
+        }
 
         hiringPostRepository.save(hiringPost);
         return hiringPost.getId();
@@ -79,9 +100,15 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .skills(skills)
                 .build();
 
+        List<PostSkill> postSkillList = hiringPost.getPostSkillList();
+        skills  = new ArrayList<>();
+        for(PostSkill postSkill : postSkillList) {
+            skills.add(postSkill.getSkill().getName());
+        }
+
         HiringPostDto hiringPostDto = HiringPostDto.builder()
                 .title(hiringPost.getTitle())
-                .skill(hiringPost.getSkill())
+                .skills(skills)
                 .location(hiringPost.getLocation())
                 .date(hiringPost.getDate())
                 .level(hiringPost.getLevel())
