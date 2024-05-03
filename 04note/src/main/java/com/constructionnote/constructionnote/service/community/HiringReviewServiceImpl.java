@@ -102,4 +102,48 @@ public class HiringReviewServiceImpl implements HiringReviewService {
         return hiringReviewResList;
     }
 
+    @Override
+    public List<HiringReviewRes> viewLimitedReviewList(String userId) throws Exception {
+        User reviewee = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("reviewee doesn't exist"));
+
+        List<HiringReview> hiringReviewList = hiringReviewRepository.findTop3ByRevieweeOrderByCreatedAtDesc(reviewee);
+
+        List<HiringReviewRes> hiringReviewResList = new ArrayList<>();
+
+        for(HiringReview hiringReview : hiringReviewList) {
+            //리뷰어 정보
+            User reviewer = userRepository.findById(hiringReview.getReviewer().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("reviewer doesn't exist"));
+
+            String profileUrl = reviewer.getProfile().getImageUrl();
+
+            byte[] image = null;
+            if(profileUrl != null) {
+                image = imageFileStore.getFile(profileUrl);
+            }
+
+            //게시글 정보
+            List<PostSkill> postSkillList = hiringReview.getHiringPost().getPostSkillList();
+            List<String> skills  = new ArrayList<>();
+            for(PostSkill postSkill : postSkillList) {
+                skills.add(postSkill.getSkill().getName());
+            }
+
+            String relativeTime = dateProcess.convertToRelativeTime(hiringReview.getCreatedAt());
+
+            HiringReviewRes hiringReviewRes = HiringReviewRes.builder()
+                    .nickname(hiringReview.getReviewer().getProfile().getNickname())
+                    .image(image)
+                    .skills(skills)
+                    .content(hiringReview.getContent())
+                    .relativeTime(relativeTime)
+                    .build();
+
+            hiringReviewResList.add(hiringReviewRes);
+        }
+
+        return hiringReviewResList;
+    }
+
 }
