@@ -45,17 +45,43 @@ public class HiringReviewServiceImpl implements HiringReviewService {
         Date currentDate = new Date();
         Timestamp timestamp = new Timestamp(currentDate.getTime());
 
-        HiringReview hiringReview = HiringReview.builder()
+        HiringReview hiringReview = HiringReview.builder1()
                 .content(hiringReviewReq.getContent())
                 .createdAt(timestamp)
                 .reviewer(reviewer)
                 .reviewee(reviewee)
                 .hiringPost(hiringPost)
-                .build();
+                .build1();
 
         hiringReviewRepository.save(hiringReview);
 
         return hiringReview.getId();
+    }
+
+    @Override
+    public void updateHiringReview(Long reviewId, HiringReviewReq hiringReviewReq) {
+        User reviewer = userRepository.findById(hiringReviewReq.getReviewerId())
+                .orElseThrow(() -> new IllegalArgumentException("reviewer doesn't exist"));
+
+        User reviewee = userRepository.findById(hiringReviewReq.getRevieweeId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        HiringPost hiringPost = hiringPostRepository.findById(hiringReviewReq.getHiringPostId())
+                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+
+        HiringReview hiringReview = hiringReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("review doesn't exist"));
+
+        HiringReview newHiringReview = HiringReview.builder2()
+                .id(reviewId)
+                .content(hiringReviewReq.getContent())
+                .createdAt(hiringReview.getCreatedAt())
+                .reviewer(reviewer)
+                .reviewee(reviewee)
+                .hiringPost(hiringPost)
+                .build2();
+
+        hiringReviewRepository.save(newHiringReview);
     }
 
     @Override

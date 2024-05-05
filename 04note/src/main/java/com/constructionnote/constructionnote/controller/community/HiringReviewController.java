@@ -27,6 +27,16 @@ public class HiringReviewController {
         }
     }
 
+    @PutMapping("/review/{reviewid}")
+    public ResponseEntity<?> updateReview(@PathVariable("reviewid") Long reviewId, @RequestBody HiringReviewReq hiringReviewReq) {
+        try {
+            hiringReviewService.updateHiringReview(reviewId, hiringReviewReq);
+            return new ResponseEntity<>("success", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     @GetMapping("/review/{userid}")
     public ResponseEntity<?> list(@PathVariable("userid") String userId) {
         try {

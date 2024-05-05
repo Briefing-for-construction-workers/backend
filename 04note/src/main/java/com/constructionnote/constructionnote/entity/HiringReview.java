@@ -30,8 +30,18 @@ public class HiringReview {
     @JoinColumn(name = "hiring_post_id")
     private HiringPost hiringPost;
 
-    @Builder
+    @Builder(builderMethodName = "builder1", buildMethodName = "build1")
     public HiringReview(String content, Timestamp createdAt, User reviewer, User reviewee, HiringPost hiringPost) {
+        this.content = content;
+        this.createdAt = createdAt;
+        this.reviewer = reviewer;
+        this.reviewee = reviewee;
+        this.hiringPost = hiringPost;
+    }
+
+    @Builder(builderMethodName = "builder2", buildMethodName = "build2")
+    public HiringReview(Long id, String content, Timestamp createdAt, User reviewer, User reviewee, HiringPost hiringPost) {
+        this.id = id;
         this.content = content;
         this.createdAt = createdAt;
         this.reviewer = reviewer;
