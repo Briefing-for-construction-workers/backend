@@ -35,6 +35,16 @@ public class HiringPostController {
         }
     }
 
+    @PutMapping("/{hiringpostid}")
+    public ResponseEntity<?> update(@PathVariable("hiringpostid") Long hiringPostId, @RequestBody HiringPostReq hiringPostReq) {
+        try {
+            hiringPostService.updateHiringPost(hiringPostId, hiringPostReq);
+            return new ResponseEntity<>("success", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     @PostMapping("/like")
     public ResponseEntity<?> like(@RequestBody HiringPostLikeReq hiringPostLikeReq) {
         try {

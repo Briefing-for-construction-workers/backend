@@ -37,6 +37,7 @@ public class CommunityServiceImpl implements CommunityService {
                 }
 
                 postDto = PostDto.builder()
+                        .postId(post.getId())
                         .postType("구인")
                         .title(hiringPost.getTitle())
                         .skills(skills)
@@ -55,6 +56,7 @@ public class CommunityServiceImpl implements CommunityService {
                 }
 
                 postDto = PostDto.builder()
+                        .postId(post.getId())
                         .postType("구직")
                         .title(seekingPost.getTitle())
                         .skills(skills)

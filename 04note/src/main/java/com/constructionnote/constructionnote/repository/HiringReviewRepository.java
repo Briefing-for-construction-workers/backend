@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface HiringReviewRepository extends JpaRepository<HiringReview, Long> {
-    List<HiringReview> findByReviewee(User reviewee);
+    List<HiringReview> findByRevieweeOrderByCreatedAtDesc(User reviewee);
     List<HiringReview> findTop3ByRevieweeOrderByCreatedAtDesc(User reviewee);
 }
