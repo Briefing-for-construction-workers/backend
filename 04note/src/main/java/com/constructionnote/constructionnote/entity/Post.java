@@ -15,6 +15,7 @@ public abstract class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
+    @Setter(AccessLevel.PROTECTED)
     private Long id;
     @Setter(AccessLevel.PROTECTED)
     private String title;

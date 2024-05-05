@@ -37,7 +37,7 @@ public class HiringPostServiceImpl implements HiringPostService {
         Date currentDate = new Date();
         Timestamp timestamp = new Timestamp(currentDate.getTime());
 
-        HiringPost hiringPost = HiringPost.builder()
+        HiringPost hiringPost = HiringPost.builder1()
                 .title(hiringPostReq.getTitle())
                 .date(hiringPostReq.getDate())
                 .location(hiringPostReq.getLocation())
@@ -47,7 +47,7 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .createdAt(timestamp)
                 .state(false)
                 .user(user)
-                .build();
+                .build1();
 
         if(hiringPostReq.getSkills() != null) {
             for(String skillName : hiringPostReq.getSkills()) {
@@ -119,6 +119,51 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .kind("구인")
                 .hiringPostDto(hiringPostDto)
                 .build();
+    }
+
+    @Override
+    public void updateHiringPost(Long hiringPostId, HiringPostReq hiringPostReq) {
+        User user = userRepository.findById(hiringPostReq.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        HiringPost hiringPost =  hiringPostRepository.findById(hiringPostId)
+                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));;
+
+        HiringPost newHiringPost = HiringPost.builder2()
+                .postId(hiringPostId)
+                .title(hiringPostReq.getTitle())
+                .date(hiringPostReq.getDate())
+                .location(hiringPostReq.getLocation())
+                .level(hiringPostReq.getLevel())
+                .pay(hiringPostReq.getPay())
+                .content(hiringPostReq.getContent())
+                .createdAt(hiringPost.getCreatedAt())
+                .state(hiringPost.isState())
+                .user(user)
+                .build2();
+
+        if(hiringPostReq.getSkills() != null) {
+            for(String skillName : hiringPostReq.getSkills()) {
+                Skill skill = skillRepository.findByName(skillName).orElse(null);
+
+                if(skill == null) {
+                    Skill skillTmp = Skill.builder()
+                            .name(skillName)
+                            .build();
+
+                    skill = skillRepository.save(skillTmp);
+                }
+
+                PostSkill postSkill = PostSkill.builder()
+                        .hiringPost(newHiringPost)
+                        .skill(skill)
+                        .build();
+
+                newHiringPost.addPostSkill(postSkill);
+            }
+        }
+
+        hiringPostRepository.save(newHiringPost);
     }
 
     @Override
