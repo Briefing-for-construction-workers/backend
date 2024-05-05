@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HiringReviewRes {
+    private Long reviewId;
     private String nickname;
     private byte[] image;
     private List<String> skills  = new ArrayList<>();
@@ -18,7 +19,8 @@ public class HiringReviewRes {
     private String relativeTime;
 
     @Builder
-    public HiringReviewRes(String nickname, byte[] image, List<String> skills, String content, String relativeTime) {
+    public HiringReviewRes(Long reviewId, String nickname, byte[] image, List<String> skills, String content, String relativeTime) {
+        this.reviewId = reviewId;
         this.nickname = nickname;
         this.image = image;
         this.skills = skills;

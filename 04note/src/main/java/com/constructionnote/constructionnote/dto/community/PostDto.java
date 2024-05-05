@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDto {
+    private Long postId;
     private String postType;
     private String title;
     private List<String> skills  = new ArrayList<>();
@@ -20,7 +21,8 @@ public class PostDto {
     private String relativeTime;
 
     @Builder
-    public PostDto(String postType, String title, List<String> skills, String level, Date date, String relativeTime) {
+    public PostDto(Long postId, String postType, String title, List<String> skills, String level, Date date, String relativeTime) {
+        this.postId = postId;
         this.postType = postType;
         this.title = title;
         this.skills = skills;

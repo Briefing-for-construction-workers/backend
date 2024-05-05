@@ -89,6 +89,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
             String relativeTime = dateProcess.convertToRelativeTime(hiringReview.getCreatedAt());
 
             HiringReviewRes hiringReviewRes = HiringReviewRes.builder()
+                    .reviewId(hiringReview.getId())
                     .nickname(hiringReview.getReviewer().getProfile().getNickname())
                     .image(image)
                     .skills(skills)
@@ -133,6 +134,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
             String relativeTime = dateProcess.convertToRelativeTime(hiringReview.getCreatedAt());
 
             HiringReviewRes hiringReviewRes = HiringReviewRes.builder()
+                    .reviewId(hiringReview.getId())
                     .nickname(hiringReview.getReviewer().getProfile().getNickname())
                     .image(image)
                     .skills(skills)
