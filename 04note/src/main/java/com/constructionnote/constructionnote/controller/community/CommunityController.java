@@ -30,6 +30,15 @@ public class CommunityController {
         }
     }
 
+    @GetMapping("/post/{userid}")
+    public ResponseEntity<?> viewMyPostList(@PathVariable("userid") String userId) {
+        try {
+            return new ResponseEntity<List<PostDto>>(communityService.viewMyPostList(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     @GetMapping("/review/{userid}")
     public ResponseEntity<?> previewReviewList(@PathVariable("userid") String userId) {
         try {

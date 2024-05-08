@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CommunityService {
     List<PostDto> viewPostList();
+    List<PostDto> viewMyPostList(String userId);
 }
