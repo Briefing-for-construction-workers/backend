@@ -174,4 +174,9 @@ public class HiringReviewServiceImpl implements HiringReviewService {
         return hiringReviewResList;
     }
 
+    @Override
+    public void deleteHiringReview(Long reviewId) {
+        hiringReviewRepository.deleteById(reviewId);
+    }
+
 }

@@ -10,4 +10,5 @@ public interface HiringReviewService {
     void updateHiringReview(Long reviewId, HiringReviewReq hiringReviewReq);
     List<HiringReviewRes> viewReviewList(String userId) throws Exception;
     List<HiringReviewRes> viewLimitedReviewList(String userId) throws Exception;
+    void deleteHiringReview(Long reviewId);
 }
