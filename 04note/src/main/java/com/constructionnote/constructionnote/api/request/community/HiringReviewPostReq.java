@@ -3,7 +3,7 @@ package com.constructionnote.constructionnote.api.request.community;
 import lombok.Getter;
 
 @Getter
-public class HiringReviewReq {
+public class HiringReviewPostReq {
     private String reviewerId;
     private String revieweeId;
     private Long hiringPostId;
