@@ -211,4 +211,18 @@ public class HiringPostServiceImpl implements HiringPostService {
         return hiringPostApply.getId();
     }
 
+    @Override
+    public void pickApplicant(HiringPostApplyReq hiringPostApplyReq) {
+        User user = userRepository.findById(hiringPostApplyReq.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        HiringPost hiringPost = hiringPostRepository.findById(hiringPostApplyReq.getHiringPostId())
+                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+
+        HiringPostApply hiringPostApply = hiringPostApplyRepository.findByUserAndHiringPost(user, hiringPost);
+        hiringPostApply.pickApplicant();
+
+        hiringPostApplyRepository.save(hiringPostApply);
+    }
+
 }

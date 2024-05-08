@@ -39,7 +39,7 @@ public class HiringPostController {
     public ResponseEntity<?> update(@PathVariable("hiringpostid") Long hiringPostId, @RequestBody HiringPostReq hiringPostReq) {
         try {
             hiringPostService.updateHiringPost(hiringPostId, hiringPostReq);
-            return new ResponseEntity<>("success", HttpStatus.CREATED);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
@@ -60,6 +60,16 @@ public class HiringPostController {
         try {
             Long hiringPostApplyId = hiringPostService.applyHiringPost(hiringPostApplyReq);
             return new ResponseEntity<>(hiringPostApplyId, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @PutMapping("/pick")
+    public ResponseEntity<?> pick(@RequestBody HiringPostApplyReq hiringPostApplyReq) {
+        try {
+            hiringPostService.pickApplicant(hiringPostApplyReq);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }

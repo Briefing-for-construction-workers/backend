@@ -1,10 +1,7 @@
 package com.constructionnote.constructionnote.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 
@@ -15,6 +12,7 @@ public class HiringPostApply {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "hiring_post_apply_id")
     private Long id;
+    @Setter(AccessLevel.PROTECTED)
     private boolean isHired;
     private Timestamp createdAt;
 
@@ -32,5 +30,9 @@ public class HiringPostApply {
         this.createdAt = createdAt;
         this.user = user;
         this.hiringPost = hiringPost;
+    }
+
+    public void pickApplicant() {
+        this.isHired = true;
     }
 }
