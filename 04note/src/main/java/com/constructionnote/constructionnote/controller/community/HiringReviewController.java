@@ -1,7 +1,6 @@
 package com.constructionnote.constructionnote.controller.community;
 
-import com.constructionnote.constructionnote.api.request.community.HiringReviewPostReq;
-import com.constructionnote.constructionnote.api.request.community.HiringReviewUpdateReq;
+import com.constructionnote.constructionnote.api.request.community.HiringReviewReq;
 import com.constructionnote.constructionnote.api.response.community.HiringReviewRes;
 import com.constructionnote.constructionnote.service.community.HiringReviewService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,7 @@ public class HiringReviewController {
     private final HiringReviewService hiringReviewService;
 
     @PostMapping("/review")
-    public ResponseEntity<?> writeReview(@RequestBody HiringReviewPostReq hiringReviewReq) {
+    public ResponseEntity<?> writeReview(@RequestBody HiringReviewReq hiringReviewReq) {
         try {
             Long hiringReviewId = hiringReviewService.createHiringReview(hiringReviewReq);
             return new ResponseEntity<>(hiringReviewId, HttpStatus.CREATED);
@@ -28,7 +27,7 @@ public class HiringReviewController {
     }
 
     @PutMapping("/review/{reviewid}")
-    public ResponseEntity<?> updateReview(@PathVariable("reviewid") Long reviewId, @RequestBody HiringReviewUpdateReq hiringReviewReq) {
+    public ResponseEntity<?> updateReview(@PathVariable("reviewid") Long reviewId, @RequestBody HiringReviewReq hiringReviewReq) {
         try {
             hiringReviewService.updateHiringReview(reviewId, hiringReviewReq);
             return new ResponseEntity<>("success", HttpStatus.CREATED);

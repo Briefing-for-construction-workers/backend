@@ -1,7 +1,6 @@
 package com.constructionnote.constructionnote.service.community;
 
-import com.constructionnote.constructionnote.api.request.community.HiringReviewPostReq;
-import com.constructionnote.constructionnote.api.request.community.HiringReviewUpdateReq;
+import com.constructionnote.constructionnote.api.request.community.HiringReviewReq;
 import com.constructionnote.constructionnote.api.response.community.HiringReviewRes;
 import com.constructionnote.constructionnote.component.DateProcess;
 import com.constructionnote.constructionnote.component.ImageFileStore;
@@ -33,7 +32,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
     private final DateProcess dateProcess;
 
     @Override
-    public Long createHiringReview(HiringReviewPostReq hiringReviewReq) {
+    public Long createHiringReview(HiringReviewReq hiringReviewReq) {
         User reviewer = userRepository.findById(hiringReviewReq.getReviewerId())
                 .orElseThrow(() -> new IllegalArgumentException("reviewer doesn't exist"));
 
@@ -60,7 +59,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
     }
 
     @Override
-    public void updateHiringReview(Long reviewId, HiringReviewUpdateReq hiringReviewReq) {
+    public void updateHiringReview(Long reviewId, HiringReviewReq hiringReviewReq) {
         HiringReview hiringReview = hiringReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("review doesn't exist"));
 
