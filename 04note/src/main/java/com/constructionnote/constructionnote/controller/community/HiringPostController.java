@@ -45,6 +45,16 @@ public class HiringPostController {
         }
     }
 
+    @DeleteMapping("/{hiringpostid}")
+    public ResponseEntity<?> delete(@PathVariable("hiringpostid") Long hiringPostId) {
+        try {
+            hiringPostService.deleteHiringPost(hiringPostId);
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     @PostMapping("/like")
     public ResponseEntity<?> like(@RequestBody HiringPostLikeReq hiringPostLikeReq) {
         try {

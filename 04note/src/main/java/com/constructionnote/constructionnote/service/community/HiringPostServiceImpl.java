@@ -23,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HiringPostServiceImpl implements HiringPostService {
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
     private final HiringPostRepository hiringPostRepository;
     private final HiringLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
@@ -157,6 +158,11 @@ public class HiringPostServiceImpl implements HiringPostService {
         }
 
         hiringPostRepository.save(hiringPost);
+    }
+
+    @Override
+    public void deleteHiringPost(Long hiringPostId) {
+        postRepository.deleteById(hiringPostId);
     }
 
     @Override

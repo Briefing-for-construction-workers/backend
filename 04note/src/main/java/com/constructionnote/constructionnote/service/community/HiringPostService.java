@@ -9,6 +9,8 @@ public interface HiringPostService {
     Long registerHiringPost(HiringPostReq hiringPostReq);
     HiringPostDetailRes viewHiringPostById(Long hiringPostId) throws Exception;
     void updateHiringPost(Long hiringPostId, HiringPostReq hiringPostReq);
+    void deleteHiringPost(Long hiringPostId);
+
 
     Long likeHiringPost(HiringPostLikeReq hiringPostLikeReq);
 
