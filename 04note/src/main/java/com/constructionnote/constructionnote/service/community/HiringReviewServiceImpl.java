@@ -39,7 +39,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
         User reviewee = userRepository.findById(hiringReviewReq.getRevieweeId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        HiringPost hiringPost = hiringPostRepository.findById(hiringReviewReq.getHiringPostId())
+        HiringPost hiringPost = hiringPostRepository.findById(hiringReviewReq.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
         Date currentDate = new Date();
@@ -56,6 +56,16 @@ public class HiringReviewServiceImpl implements HiringReviewService {
         hiringReviewRepository.save(hiringReview);
 
         return hiringReview.getId();
+    }
+
+    @Override
+    public void updateHiringReview(Long reviewId, HiringReviewReq hiringReviewReq) {
+        HiringReview hiringReview = hiringReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("review doesn't exist"));
+
+        hiringReview.updateHiringReview(hiringReviewReq.getContent());
+
+        hiringReviewRepository.save(hiringReview);
     }
 
     @Override
@@ -146,6 +156,11 @@ public class HiringReviewServiceImpl implements HiringReviewService {
         }
 
         return hiringReviewResList;
+    }
+
+    @Override
+    public void deleteHiringReview(Long reviewId) {
+        hiringReviewRepository.deleteById(reviewId);
     }
 
 }

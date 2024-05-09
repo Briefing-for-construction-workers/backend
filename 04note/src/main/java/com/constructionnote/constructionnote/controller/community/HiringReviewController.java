@@ -2,7 +2,6 @@ package com.constructionnote.constructionnote.controller.community;
 
 import com.constructionnote.constructionnote.api.request.community.HiringReviewReq;
 import com.constructionnote.constructionnote.api.response.community.HiringReviewRes;
-import com.constructionnote.constructionnote.dto.community.PostDto;
 import com.constructionnote.constructionnote.service.community.HiringReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,10 +26,30 @@ public class HiringReviewController {
         }
     }
 
+    @PutMapping("/review/{reviewid}")
+    public ResponseEntity<?> updateReview(@PathVariable("reviewid") Long reviewId, @RequestBody HiringReviewReq hiringReviewReq) {
+        try {
+            hiringReviewService.updateHiringReview(reviewId, hiringReviewReq);
+            return new ResponseEntity<>("success", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     @GetMapping("/review/{userid}")
     public ResponseEntity<?> list(@PathVariable("userid") String userId) {
         try {
             return new ResponseEntity<List<HiringReviewRes>>(hiringReviewService.viewReviewList(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @DeleteMapping("/review/{reviewid}")
+    public ResponseEntity<?> deleteReview(@PathVariable("reviewid") Long reviewId) {
+        try {
+            hiringReviewService.deleteHiringReview(reviewId);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }

@@ -5,5 +5,5 @@ import lombok.Getter;
 @Getter
 public class HiringPostLikeReq {
     private String userId;
-    private Long hiringPostId;
+    private Long postId;
 }

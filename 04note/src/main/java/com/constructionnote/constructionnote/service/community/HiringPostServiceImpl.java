@@ -23,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HiringPostServiceImpl implements HiringPostService {
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
     private final HiringPostRepository hiringPostRepository;
     private final HiringLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
@@ -37,7 +38,7 @@ public class HiringPostServiceImpl implements HiringPostService {
         Date currentDate = new Date();
         Timestamp timestamp = new Timestamp(currentDate.getTime());
 
-        HiringPost hiringPost = HiringPost.builder1()
+        HiringPost hiringPost = HiringPost.builder()
                 .title(hiringPostReq.getTitle())
                 .date(hiringPostReq.getDate())
                 .location(hiringPostReq.getLocation())
@@ -47,7 +48,7 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .createdAt(timestamp)
                 .state(false)
                 .user(user)
-                .build1();
+                .build();
 
         if(hiringPostReq.getSkills() != null) {
             for(String skillName : hiringPostReq.getSkills()) {
@@ -75,8 +76,8 @@ public class HiringPostServiceImpl implements HiringPostService {
     }
 
     @Override
-    public HiringPostDetailRes viewHiringPostById(Long hiringPostId) throws Exception {
-        HiringPost hiringPost = hiringPostRepository.findById(hiringPostId)
+    public HiringPostDetailRes viewHiringPostById(Long postId) throws Exception {
+        HiringPost hiringPost = hiringPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
         String profileUrl = hiringPost.getUser().getProfile().getImageUrl();
@@ -122,25 +123,18 @@ public class HiringPostServiceImpl implements HiringPostService {
     }
 
     @Override
-    public void updateHiringPost(Long hiringPostId, HiringPostReq hiringPostReq) {
-        User user = userRepository.findById(hiringPostReq.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
-
-        HiringPost hiringPost =  hiringPostRepository.findById(hiringPostId)
+    public void updateHiringPost(Long postId, HiringPostReq hiringPostReq) {
+        HiringPost hiringPost =  hiringPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));;
 
-        HiringPost newHiringPost = HiringPost.builder2()
-                .postId(hiringPostId)
-                .title(hiringPostReq.getTitle())
-                .date(hiringPostReq.getDate())
-                .location(hiringPostReq.getLocation())
-                .level(hiringPostReq.getLevel())
-                .pay(hiringPostReq.getPay())
-                .content(hiringPostReq.getContent())
-                .createdAt(hiringPost.getCreatedAt())
-                .state(hiringPost.isState())
-                .user(user)
-                .build2();
+        hiringPost.updateHiringPost(
+                hiringPostReq.getTitle()
+                ,hiringPostReq.getDate()
+                ,hiringPostReq.getLocation()
+                ,hiringPostReq.getLevel()
+                ,hiringPostReq.getPay()
+                ,hiringPostReq.getContent()
+        );
 
         if(hiringPostReq.getSkills() != null) {
             for(String skillName : hiringPostReq.getSkills()) {
@@ -155,15 +149,20 @@ public class HiringPostServiceImpl implements HiringPostService {
                 }
 
                 PostSkill postSkill = PostSkill.builder()
-                        .hiringPost(newHiringPost)
+                        .hiringPost(hiringPost)
                         .skill(skill)
                         .build();
 
-                newHiringPost.addPostSkill(postSkill);
+                hiringPost.addPostSkill(postSkill);
             }
         }
 
-        hiringPostRepository.save(newHiringPost);
+        hiringPostRepository.save(hiringPost);
+    }
+
+    @Override
+    public void deleteHiringPost(Long postId) {
+        postRepository.deleteById(postId);
     }
 
     @Override
@@ -171,7 +170,7 @@ public class HiringPostServiceImpl implements HiringPostService {
         User user = userRepository.findById(hiringPostLikeReq.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        HiringPost hiringPost = hiringPostRepository.findById(hiringPostLikeReq.getHiringPostId())
+        HiringPost hiringPost = hiringPostRepository.findById(hiringPostLikeReq.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
         Date currentDate = new Date();
@@ -193,7 +192,7 @@ public class HiringPostServiceImpl implements HiringPostService {
         User user = userRepository.findById(hiringPostApplyReq.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        HiringPost hiringPost = hiringPostRepository.findById(hiringPostApplyReq.getHiringPostId())
+        HiringPost hiringPost = hiringPostRepository.findById(hiringPostApplyReq.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
         Date currentDate = new Date();
@@ -209,6 +208,20 @@ public class HiringPostServiceImpl implements HiringPostService {
         hiringPostApplyRepository.save(hiringPostApply);
 
         return hiringPostApply.getId();
+    }
+
+    @Override
+    public void pickApplicant(HiringPostApplyReq hiringPostApplyReq) {
+        User user = userRepository.findById(hiringPostApplyReq.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        HiringPost hiringPost = hiringPostRepository.findById(hiringPostApplyReq.getPostId())
+                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+
+        HiringPostApply hiringPostApply = hiringPostApplyRepository.findByUserAndHiringPost(user, hiringPost);
+        hiringPostApply.pickApplicant();
+
+        hiringPostApplyRepository.save(hiringPostApply);
     }
 
 }

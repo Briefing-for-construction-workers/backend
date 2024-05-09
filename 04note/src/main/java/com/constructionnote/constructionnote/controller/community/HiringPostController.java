@@ -26,20 +26,30 @@ public class HiringPostController {
         }
     }
 
-    @GetMapping("/{hiringpostid}")
-    public ResponseEntity<?> view(@PathVariable("hiringpostid") Long hiringPostId) {
+    @GetMapping("/{postid}")
+    public ResponseEntity<?> view(@PathVariable("postid") Long postId) {
         try {
-            return new ResponseEntity<HiringPostDetailRes>(hiringPostService.viewHiringPostById(hiringPostId), HttpStatus.OK);
+            return new ResponseEntity<HiringPostDetailRes>(hiringPostService.viewHiringPostById(postId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
     }
 
-    @PutMapping("/{hiringpostid}")
-    public ResponseEntity<?> update(@PathVariable("hiringpostid") Long hiringPostId, @RequestBody HiringPostReq hiringPostReq) {
+    @PutMapping("/{postid}")
+    public ResponseEntity<?> update(@PathVariable("postid") Long postId, @RequestBody HiringPostReq hiringPostReq) {
         try {
-            hiringPostService.updateHiringPost(hiringPostId, hiringPostReq);
-            return new ResponseEntity<>("success", HttpStatus.CREATED);
+            hiringPostService.updateHiringPost(postId, hiringPostReq);
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> delete(@PathVariable("postId") Long postId) {
+        try {
+            hiringPostService.deleteHiringPost(postId);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
@@ -60,6 +70,16 @@ public class HiringPostController {
         try {
             Long hiringPostApplyId = hiringPostService.applyHiringPost(hiringPostApplyReq);
             return new ResponseEntity<>(hiringPostApplyId, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @PutMapping("/pick")
+    public ResponseEntity<?> pick(@RequestBody HiringPostApplyReq hiringPostApplyReq) {
+        try {
+            hiringPostService.pickApplicant(hiringPostApplyReq);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
