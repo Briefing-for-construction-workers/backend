@@ -76,8 +76,8 @@ public class HiringPostServiceImpl implements HiringPostService {
     }
 
     @Override
-    public HiringPostDetailRes viewHiringPostById(Long hiringPostId) throws Exception {
-        HiringPost hiringPost = hiringPostRepository.findById(hiringPostId)
+    public HiringPostDetailRes viewHiringPostById(Long postId) throws Exception {
+        HiringPost hiringPost = hiringPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
         String profileUrl = hiringPost.getUser().getProfile().getImageUrl();
@@ -123,8 +123,8 @@ public class HiringPostServiceImpl implements HiringPostService {
     }
 
     @Override
-    public void updateHiringPost(Long hiringPostId, HiringPostReq hiringPostReq) {
-        HiringPost hiringPost =  hiringPostRepository.findById(hiringPostId)
+    public void updateHiringPost(Long postId, HiringPostReq hiringPostReq) {
+        HiringPost hiringPost =  hiringPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));;
 
         hiringPost.updateHiringPost(
@@ -161,8 +161,8 @@ public class HiringPostServiceImpl implements HiringPostService {
     }
 
     @Override
-    public void deleteHiringPost(Long hiringPostId) {
-        postRepository.deleteById(hiringPostId);
+    public void deleteHiringPost(Long postId) {
+        postRepository.deleteById(postId);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class HiringPostServiceImpl implements HiringPostService {
         User user = userRepository.findById(hiringPostLikeReq.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        HiringPost hiringPost = hiringPostRepository.findById(hiringPostLikeReq.getHiringPostId())
+        HiringPost hiringPost = hiringPostRepository.findById(hiringPostLikeReq.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
         Date currentDate = new Date();
@@ -192,7 +192,7 @@ public class HiringPostServiceImpl implements HiringPostService {
         User user = userRepository.findById(hiringPostApplyReq.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        HiringPost hiringPost = hiringPostRepository.findById(hiringPostApplyReq.getHiringPostId())
+        HiringPost hiringPost = hiringPostRepository.findById(hiringPostApplyReq.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
         Date currentDate = new Date();
@@ -215,7 +215,7 @@ public class HiringPostServiceImpl implements HiringPostService {
         User user = userRepository.findById(hiringPostApplyReq.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        HiringPost hiringPost = hiringPostRepository.findById(hiringPostApplyReq.getHiringPostId())
+        HiringPost hiringPost = hiringPostRepository.findById(hiringPostApplyReq.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
         HiringPostApply hiringPostApply = hiringPostApplyRepository.findByUserAndHiringPost(user, hiringPost);

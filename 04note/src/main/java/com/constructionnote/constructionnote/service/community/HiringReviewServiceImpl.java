@@ -39,7 +39,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
         User reviewee = userRepository.findById(hiringReviewReq.getRevieweeId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        HiringPost hiringPost = hiringPostRepository.findById(hiringReviewReq.getHiringPostId())
+        HiringPost hiringPost = hiringPostRepository.findById(hiringReviewReq.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
         Date currentDate = new Date();

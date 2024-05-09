@@ -7,9 +7,9 @@ import com.constructionnote.constructionnote.api.response.community.HiringPostDe
 
 public interface HiringPostService {
     Long registerHiringPost(HiringPostReq hiringPostReq);
-    HiringPostDetailRes viewHiringPostById(Long hiringPostId) throws Exception;
-    void updateHiringPost(Long hiringPostId, HiringPostReq hiringPostReq);
-    void deleteHiringPost(Long hiringPostId);
+    HiringPostDetailRes viewHiringPostById(Long postId) throws Exception;
+    void updateHiringPost(Long postId, HiringPostReq hiringPostReq);
+    void deleteHiringPost(Long postId);
 
 
     Long likeHiringPost(HiringPostLikeReq hiringPostLikeReq);

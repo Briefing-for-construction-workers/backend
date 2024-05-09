@@ -26,29 +26,29 @@ public class HiringPostController {
         }
     }
 
-    @GetMapping("/{hiringpostid}")
-    public ResponseEntity<?> view(@PathVariable("hiringpostid") Long hiringPostId) {
+    @GetMapping("/{postid}")
+    public ResponseEntity<?> view(@PathVariable("postid") Long postId) {
         try {
-            return new ResponseEntity<HiringPostDetailRes>(hiringPostService.viewHiringPostById(hiringPostId), HttpStatus.OK);
+            return new ResponseEntity<HiringPostDetailRes>(hiringPostService.viewHiringPostById(postId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
     }
 
-    @PutMapping("/{hiringpostid}")
-    public ResponseEntity<?> update(@PathVariable("hiringpostid") Long hiringPostId, @RequestBody HiringPostReq hiringPostReq) {
+    @PutMapping("/{postid}")
+    public ResponseEntity<?> update(@PathVariable("postid") Long postId, @RequestBody HiringPostReq hiringPostReq) {
         try {
-            hiringPostService.updateHiringPost(hiringPostId, hiringPostReq);
+            hiringPostService.updateHiringPost(postId, hiringPostReq);
             return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
     }
 
-    @DeleteMapping("/{hiringpostid}")
-    public ResponseEntity<?> delete(@PathVariable("hiringpostid") Long hiringPostId) {
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> delete(@PathVariable("postId") Long postId) {
         try {
-            hiringPostService.deleteHiringPost(hiringPostId);
+            hiringPostService.deleteHiringPost(postId);
             return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);

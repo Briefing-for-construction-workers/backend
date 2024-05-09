@@ -6,6 +6,6 @@ import lombok.Getter;
 public class HiringReviewReq {
     private String reviewerId;
     private String revieweeId;
-    private Long hiringPostId;
+    private Long postId;
     private String content;
 }
