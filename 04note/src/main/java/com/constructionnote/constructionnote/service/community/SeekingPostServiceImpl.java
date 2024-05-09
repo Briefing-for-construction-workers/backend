@@ -5,6 +5,7 @@ import com.constructionnote.constructionnote.entity.Construction;
 import com.constructionnote.constructionnote.entity.SeekingPost;
 import com.constructionnote.constructionnote.entity.User;
 import com.constructionnote.constructionnote.repository.ConstructionRepository;
+import com.constructionnote.constructionnote.repository.PostRepository;
 import com.constructionnote.constructionnote.repository.SeekingPostRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -20,6 +21,7 @@ import java.util.Date;
 public class SeekingPostServiceImpl implements SeekingPostService {
     private final UserRepository userRepository;
     private final ConstructionRepository constructionRepository;
+    private final PostRepository postRepository;
     private final SeekingPostRepository seekingPostRepository;
 
     @Override
@@ -43,5 +45,10 @@ public class SeekingPostServiceImpl implements SeekingPostService {
 
         seekingPostRepository.save(seekingPost);
         return seekingPost.getId();
+    }
+
+    @Override
+    public void deleteSeekingPost(Long postId) {
+        postRepository.deleteById(postId);
     }
 }

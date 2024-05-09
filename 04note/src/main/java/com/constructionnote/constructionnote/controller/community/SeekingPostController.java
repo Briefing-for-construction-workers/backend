@@ -5,10 +5,7 @@ import com.constructionnote.constructionnote.service.community.SeekingPostServic
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +18,16 @@ public class SeekingPostController {
         try {
             Long seekingPostId = seekingPostService.registerSeekingPost(seekingPostReq);
             return new ResponseEntity<>(seekingPostId, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @DeleteMapping("/{postid}")
+    public ResponseEntity<?> delete(@PathVariable("postid") Long postId) {
+        try {
+            seekingPostService.deleteSeekingPost(postId);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }

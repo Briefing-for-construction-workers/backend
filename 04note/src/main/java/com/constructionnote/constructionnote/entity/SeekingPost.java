@@ -5,13 +5,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
 @DiscriminatorValue("seeking")
+@OnDelete(action = OnDeleteAction.CASCADE)
+@Entity
 public class SeekingPost extends Post {
     @ManyToOne
     @JoinColumn(name = "construction_id")
