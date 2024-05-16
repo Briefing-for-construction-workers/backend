@@ -4,6 +4,7 @@ import com.constructionnote.constructionnote.api.request.user.UserProfileReq;
 import com.constructionnote.constructionnote.api.request.user.UserSignupReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.component.ImageFileStore;
+import com.constructionnote.constructionnote.component.S3FileStore;
 import com.constructionnote.constructionnote.entity.Profile;
 import com.constructionnote.constructionnote.entity.Skill;
 import com.constructionnote.constructionnote.entity.User;
@@ -27,10 +28,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final SkillRepository skillRepository;
+
     private final ImageFileStore imageFileStore;
+    private final S3FileStore s3FileStore;
 
     @Override
-    public void signUp(UserSignupReq userSignupReq, MultipartFile image) throws IOException {
+    public void signUp(UserSignupReq userSignupReq, MultipartFile image) throws Exception {
         User user = User.builder()
                 .id(userSignupReq.getUserId())
                 .address(userSignupReq.getAddress())
@@ -39,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
         String storeFilename = null;
         if(image != null) {
-            storeFilename = imageFileStore.storeFile(image);
+            storeFilename = s3FileStore.storeFile(image);
         }
 
         Profile profile = Profile.builder()
