@@ -5,6 +5,7 @@ import com.constructionnote.constructionnote.api.request.user.UserSignupReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.component.ImageFileStore;
 import com.constructionnote.constructionnote.component.S3FileStore;
+import com.constructionnote.constructionnote.dto.user.FileDto;
 import com.constructionnote.constructionnote.entity.Profile;
 import com.constructionnote.constructionnote.entity.Skill;
 import com.constructionnote.constructionnote.entity.User;
@@ -40,14 +41,19 @@ public class UserServiceImpl implements UserService {
                 .level(userSignupReq.getLevel())
                 .build();
 
-        String storeFilename = null;
-        if(image != null) {
-            storeFilename = s3FileStore.storeFile(image);
+        String imageUrl = null;
+        String fileName = null;
+
+        if(!image.isEmpty()) {
+            FileDto fileDto = s3FileStore.storeFile(image);
+            imageUrl = fileDto.getImageUrl();
+            fileName = fileDto.getFileName();
         }
 
         Profile profile = Profile.builder()
                 .nickname(userSignupReq.getNickname())
-                .imageUrl(storeFilename)
+                .imageUrl(imageUrl)
+                .fileName(fileName)
                 .build();
 
         user.putProfile(profile);
@@ -83,22 +89,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserProfile(UserProfileReq userProfileReq, MultipartFile image) throws IOException {
+    public void updateUserProfile(UserProfileReq userProfileReq, MultipartFile image) throws Exception {
         String userId = userProfileReq.getUserId();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        String storeFilename = imageFileStore.storeFile(image);
+        if(user.getProfile().getFileName() != null) {
+            s3FileStore.deleteFile(user.getProfile().getFileName());
+        }
 
-        Profile profile = Profile.builder()
-                .nickname(userProfileReq.getNickname())
-                .imageUrl(storeFilename)
-                .build();
+        String imageUrl = null;
+        String fileName = null;
+
+        if(!image.isEmpty()) {
+            FileDto fileDto = s3FileStore.storeFile(image);
+            imageUrl = fileDto.getImageUrl();
+            fileName = fileDto.getFileName();
+        }
+
+        Profile profile = user.getProfile();
+        profile.updateProfile(userProfileReq.getNickname(), imageUrl, fileName);
 
         profileRepository.save(profile);
-        user.putProfile(profile);
-        userRepository.save(user);
     }
 
     @Override

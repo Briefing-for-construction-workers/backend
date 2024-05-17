@@ -3,6 +3,7 @@ package com.constructionnote.constructionnote.component;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.constructionnote.constructionnote.dto.user.FileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,14 +20,14 @@ public class S3FileStore {
 
     private final AmazonS3Client amazonS3Client;
 
-    public String storeFile(MultipartFile multipartFile) throws Exception {
+    public FileDto storeFile(MultipartFile multipartFile) throws Exception {
         if (multipartFile.isEmpty()) {
             return null;
         }
         return uploadToS3(multipartFile);
     }
 
-    private String uploadToS3(MultipartFile multipartFile) throws Exception {
+    private FileDto uploadToS3(MultipartFile multipartFile) throws Exception {
         String originalFilename = multipartFile.getOriginalFilename();
         String storedFileName = createStoreFilename(originalFilename);
 
@@ -43,7 +44,22 @@ public class S3FileStore {
             throw new Exception("Can't upload file");
         }
 
-        return amazonS3Client.getUrl(bucket, storedFileName).toString();
+        String uploadFileUrl = amazonS3Client.getUrl(bucket, storedFileName).toString();
+
+        FileDto fileDto = FileDto.builder()
+                .imageUrl(uploadFileUrl)
+                .fileName(storedFileName)
+                .build();
+
+        return fileDto;
+    }
+
+    public void deleteFile(String filePath) throws Exception {
+        try {
+            amazonS3Client.deleteObject(bucket, filePath);
+        } catch (Exception e) {
+            throw new Exception("Can't delete file");
+        }
     }
 
     private String createStoreFilename(String originalFilename) {

@@ -16,10 +16,18 @@ public class Profile {
     private Long id;
     private String nickname;
     private String imageUrl;
+    private String fileName;
 
     @Builder
-    public Profile(String nickname, String imageUrl) {
+    public Profile(String nickname, String imageUrl, String fileName) {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
+        this.fileName = fileName;
+    }
+
+    public void updateProfile(String nickname, String imageUrl, String fileName) {
+        this.nickname = nickname;
+        this.imageUrl = imageUrl;
+        this.fileName = fileName;
     }
 }
