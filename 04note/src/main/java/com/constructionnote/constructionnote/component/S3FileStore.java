@@ -62,6 +62,10 @@ public class S3FileStore {
         }
     }
 
+    public String getFileUrl(String fileName) {
+        return amazonS3Client.getUrl(bucket, fileName).toString();
+    }
+
     private String createStoreFilename(String originalFilename) {
         String uuid = UUID.randomUUID().toString();
         int idx = originalFilename.lastIndexOf(".");

@@ -3,7 +3,6 @@ package com.constructionnote.constructionnote.service.user;
 import com.constructionnote.constructionnote.api.request.user.UserProfileReq;
 import com.constructionnote.constructionnote.api.request.user.UserSignupReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
-import com.constructionnote.constructionnote.component.ImageFileStore;
 import com.constructionnote.constructionnote.component.S3FileStore;
 import com.constructionnote.constructionnote.dto.user.FileDto;
 import com.constructionnote.constructionnote.entity.Profile;
@@ -19,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 @Slf4j
 @Transactional
 @Service
@@ -30,7 +27,6 @@ public class UserServiceImpl implements UserService {
     private final ProfileRepository profileRepository;
     private final SkillRepository skillRepository;
 
-    private final ImageFileStore imageFileStore;
     private final S3FileStore s3FileStore;
 
     @Override
@@ -119,16 +115,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        String profileUrl = user.getProfile().getImageUrl();
-
-        byte[] image = null;
-        if(profileUrl != null) {
-            image = imageFileStore.getFile(profileUrl);
-        }
+        String imageUrl = user.getProfile().getImageUrl();
 
         return UserProfileRes.builder()
                 .nickname(user.getProfile().getNickname())
-                .image(image)
+                .imageUrl(imageUrl)
                 .build();
     }
 }

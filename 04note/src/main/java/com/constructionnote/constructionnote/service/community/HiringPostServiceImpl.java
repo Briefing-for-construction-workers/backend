@@ -4,7 +4,6 @@ import com.constructionnote.constructionnote.api.request.community.HiringPostApp
 import com.constructionnote.constructionnote.api.request.community.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
 import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
-import com.constructionnote.constructionnote.component.ImageFileStore;
 import com.constructionnote.constructionnote.dto.community.HiringPostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
 import com.constructionnote.constructionnote.entity.*;
@@ -28,7 +27,6 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final HiringLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
     private final SkillRepository skillRepository;
-    private final ImageFileStore imageFileStore;
 
     @Override
     public Long registerHiringPost(HiringPostReq hiringPostReq) {
@@ -80,12 +78,7 @@ public class HiringPostServiceImpl implements HiringPostService {
         HiringPost hiringPost = hiringPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
-        String profileUrl = hiringPost.getUser().getProfile().getImageUrl();
-
-        byte[] image = null;
-        if(profileUrl != null) {
-            image = imageFileStore.getFile(profileUrl);
-        }
+        String imageUrl = hiringPost.getUser().getProfile().getImageUrl();
 
         List<UserSkill> userSkillList = hiringPost.getUser().getUserSkillList();
         List<String> skills  = new ArrayList<>();
@@ -95,7 +88,7 @@ public class HiringPostServiceImpl implements HiringPostService {
 
         ProfileDto profileDto = ProfileDto.builder()
                 .nickname(hiringPost.getUser().getProfile().getNickname())
-                .image(image)
+                .imageUrl(imageUrl)
                 .skills(skills)
                 .build();
 

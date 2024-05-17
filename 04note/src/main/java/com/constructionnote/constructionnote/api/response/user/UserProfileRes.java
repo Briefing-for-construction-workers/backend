@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserProfileRes {
     private String nickname;
-    private byte[] image;
+    private String imageUrl;
 
     @Builder
-    public UserProfileRes(String userId, String nickname, byte[] image) {
+    public UserProfileRes(String nickname, String imageUrl) {
         this.nickname = nickname;
-        this.image = image;
+        this.imageUrl = imageUrl;
     }
 }

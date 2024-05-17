@@ -12,13 +12,13 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProfileDto {
     private String nickname;
-    private byte[] image;
+    private String imageUrl;
     private List<String> skills  = new ArrayList<>();
 
     @Builder
-    public ProfileDto(String nickname, byte[] image, List<String> skills) {
+    public ProfileDto(String nickname, String imageUrl, List<String> skills) {
         this.nickname = nickname;
-        this.image = image;
+        this.imageUrl = imageUrl;
         this.skills = skills;
     }
 }
