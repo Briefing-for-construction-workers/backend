@@ -1,4 +1,4 @@
-package com.constructionnote.constructionnote.api.response.user;
+package com.constructionnote.constructionnote.dto.user;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserProfileRes {
-    private String nickname;
+public class FileDto {
     private String imageUrl;
+    private String fileName;
 
     @Builder
-    public UserProfileRes(String nickname, String imageUrl) {
-        this.nickname = nickname;
+    public FileDto(String imageUrl, String fileName) {
         this.imageUrl = imageUrl;
+        this.fileName = fileName;
     }
 }

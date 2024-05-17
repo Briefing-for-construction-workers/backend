@@ -8,9 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface UserService {
-    void signUp(UserSignupReq userSignupReq, MultipartFile image) throws IOException;
+    void signUp(UserSignupReq userSignupReq, MultipartFile image) throws Exception;
     boolean exist(String userId);
 
-    void updateUserProfile(UserProfileReq userProfileReq, MultipartFile image) throws IOException;
+    void updateUserProfile(UserProfileReq userProfileReq, MultipartFile image) throws Exception;
     UserProfileRes getUserProfile(String userId) throws Exception;
 }

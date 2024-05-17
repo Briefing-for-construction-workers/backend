@@ -3,7 +3,8 @@ package com.constructionnote.constructionnote.service.user;
 import com.constructionnote.constructionnote.api.request.user.UserProfileReq;
 import com.constructionnote.constructionnote.api.request.user.UserSignupReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
-import com.constructionnote.constructionnote.component.ImageFileStore;
+import com.constructionnote.constructionnote.component.S3FileStore;
+import com.constructionnote.constructionnote.dto.user.FileDto;
 import com.constructionnote.constructionnote.entity.Profile;
 import com.constructionnote.constructionnote.entity.Skill;
 import com.constructionnote.constructionnote.entity.User;
@@ -17,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 @Slf4j
 @Transactional
 @Service
@@ -27,24 +26,30 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final SkillRepository skillRepository;
-    private final ImageFileStore imageFileStore;
+
+    private final S3FileStore s3FileStore;
 
     @Override
-    public void signUp(UserSignupReq userSignupReq, MultipartFile image) throws IOException {
+    public void signUp(UserSignupReq userSignupReq, MultipartFile image) throws Exception {
         User user = User.builder()
                 .id(userSignupReq.getUserId())
                 .address(userSignupReq.getAddress())
                 .level(userSignupReq.getLevel())
                 .build();
 
-        String storeFilename = null;
-        if(image != null) {
-            storeFilename = imageFileStore.storeFile(image);
+        String imageUrl = null;
+        String fileName = null;
+
+        if(!image.isEmpty()) {
+            FileDto fileDto = s3FileStore.storeFile(image);
+            imageUrl = fileDto.getImageUrl();
+            fileName = fileDto.getFileName();
         }
 
         Profile profile = Profile.builder()
                 .nickname(userSignupReq.getNickname())
-                .imageUrl(storeFilename)
+                .imageUrl(imageUrl)
+                .fileName(fileName)
                 .build();
 
         user.putProfile(profile);
@@ -80,22 +85,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserProfile(UserProfileReq userProfileReq, MultipartFile image) throws IOException {
+    public void updateUserProfile(UserProfileReq userProfileReq, MultipartFile image) throws Exception {
         String userId = userProfileReq.getUserId();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        String storeFilename = imageFileStore.storeFile(image);
+        if(user.getProfile().getFileName() != null) {
+            s3FileStore.deleteFile(user.getProfile().getFileName());
+        }
 
-        Profile profile = Profile.builder()
-                .nickname(userProfileReq.getNickname())
-                .imageUrl(storeFilename)
-                .build();
+        String imageUrl = null;
+        String fileName = null;
+
+        if(!image.isEmpty()) {
+            FileDto fileDto = s3FileStore.storeFile(image);
+            imageUrl = fileDto.getImageUrl();
+            fileName = fileDto.getFileName();
+        }
+
+        Profile profile = user.getProfile();
+        profile.updateProfile(userProfileReq.getNickname(), imageUrl, fileName);
 
         profileRepository.save(profile);
-        user.putProfile(profile);
-        userRepository.save(user);
     }
 
     @Override
@@ -103,16 +115,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        String profileUrl = user.getProfile().getImageUrl();
-
-        byte[] image = null;
-        if(profileUrl != null) {
-            image = imageFileStore.getFile(profileUrl);
-        }
+        String imageUrl = user.getProfile().getImageUrl();
 
         return UserProfileRes.builder()
                 .nickname(user.getProfile().getNickname())
-                .image(image)
+                .imageUrl(imageUrl)
                 .build();
     }
 }
