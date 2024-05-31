@@ -7,10 +7,7 @@ import com.constructionnote.constructionnote.service.community.HiringReviewServi
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +22,17 @@ public class CommunityController {
     public ResponseEntity<?> previewPostList() {
         try {
             return new ResponseEntity<List<PostDto>>(communityService.viewPostList(), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @GetMapping("/post")
+    public ResponseEntity<?> searchPostList(@RequestParam(required = false, defaultValue = "0", value = "page") Integer page,
+                                            @RequestParam(required = false, defaultValue = "1100000000", value = "fullCode") String fullCode,
+                                            @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword) {
+        try {
+            return new ResponseEntity<List<PostDto>>(communityService.viewPostListByFilter(page, fullCode, keyword), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
