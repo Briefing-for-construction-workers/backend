@@ -10,4 +10,3 @@ public interface CommunityService {
 
     List<PostDto> viewPostListByFilter(Integer page, String fullCode, String keyword);
 }
-s
