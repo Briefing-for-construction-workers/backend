@@ -36,6 +36,11 @@ public class CommunityServiceImpl implements CommunityService {
         return getPostDtoList(postList);
     }
 
+    @Override
+    public List<PostDto> viewPostListByFilter(Integer page, String fullCode, String keyword) {
+        return null;
+    }
+
     private List<PostDto> getPostDtoList(List<Post> postList) {
         List<PostDto> postDtoList = new ArrayList<>();
 
