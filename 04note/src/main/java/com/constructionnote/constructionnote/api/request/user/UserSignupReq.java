@@ -9,7 +9,7 @@ import java.util.List;
 public class UserSignupReq {
     private String userId;
     private String nickname;
-    private String address;
+    private String fullCode;
     private String level;
     private List<String> skills  = new ArrayList<>();
 }

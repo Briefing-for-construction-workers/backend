@@ -16,8 +16,11 @@ public class User {
     @Id
     @Column(name = "user_id")
     private String id;
-    private String address;
     private String level;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_code")
+    private Address address;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "profile_id")
@@ -51,11 +54,12 @@ public class User {
     private List<HiringReview> hiringRevieweeList = new ArrayList<>();
 
     @Builder
-    public User(String id, String address, String level) {
+    public User(String id, String level) {
         this.id = id;
-        this.address = address;
         this.level = level;
     }
+
+    public void putAddress(Address address) { this.address = address; }
 
     public void putProfile(Profile profile) {
         this.profile = profile;
