@@ -14,4 +14,8 @@ public class Address {
     private String eubmyeondong;
     private Double lat;
     private Double lng;
+
+    public String getFullAddressName() {
+        return sido + " " + sigungu + " " + eubmyeondong;
+    }
 }
