@@ -27,7 +27,7 @@ public class CommunityController {
         }
     }
 
-    @GetMapping("/post")
+    @GetMapping("/post/search")
     public ResponseEntity<?> searchPostList(@RequestParam(required = false, defaultValue = "0", value = "page") Integer page,
                                             @RequestParam(required = false, defaultValue = "1100000000", value = "fullCode") String fullCode,
                                             @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword) {
