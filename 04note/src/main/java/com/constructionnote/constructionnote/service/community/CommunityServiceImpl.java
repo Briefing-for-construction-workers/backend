@@ -46,7 +46,8 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public List<PostDto> viewPostListByFilter(Integer page, String fullCode, String keyword) {
-        Address address = addressRepository.findByAddressCode(fullCode);
+        Address address = addressRepository.findById(fullCode)
+                .orElseThrow(() -> new IllegalArgumentException("addressCode doesn't exist"));
 
         double[] boundingBox = geoUtils.getBoundingBox(address.getLat(), address.getLng(), 1.0);
         List<String> nearbyAddressCodes = addressRepository.getNearbyAddressCodeByBoundingBox(address.getLat(), address.getLng(), boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
