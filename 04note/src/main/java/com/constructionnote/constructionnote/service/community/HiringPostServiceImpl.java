@@ -27,6 +27,7 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final HiringLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
     private final SkillRepository skillRepository;
+    private final AddressRepository addressRepository;
 
     @Override
     public Long registerHiringPost(HiringPostReq hiringPostReq) {
@@ -39,7 +40,6 @@ public class HiringPostServiceImpl implements HiringPostService {
         HiringPost hiringPost = HiringPost.builder()
                 .title(hiringPostReq.getTitle())
                 .date(hiringPostReq.getDate())
-                .location(hiringPostReq.getLocation())
                 .level(hiringPostReq.getLevel())
                 .pay(hiringPostReq.getPay())
                 .content(hiringPostReq.getContent())
@@ -68,6 +68,11 @@ public class HiringPostServiceImpl implements HiringPostService {
                 hiringPost.addPostSkill(postSkill);
             }
         }
+
+        Address address = addressRepository.findById(hiringPostReq.getFullCode())
+                .orElseThrow(() -> new IllegalArgumentException("addressCode doesn't exist"));
+
+        hiringPost.putAddress(address);
 
         hiringPostRepository.save(hiringPost);
         return hiringPost.getId();
@@ -101,7 +106,7 @@ public class HiringPostServiceImpl implements HiringPostService {
         HiringPostDto hiringPostDto = HiringPostDto.builder()
                 .title(hiringPost.getTitle())
                 .skills(skills)
-                .location(hiringPost.getLocation())
+                .location(hiringPost.getAddress().getFullAddressName())
                 .date(hiringPost.getDate())
                 .level(hiringPost.getLevel())
                 .pay(hiringPost.getPay())
@@ -123,7 +128,6 @@ public class HiringPostServiceImpl implements HiringPostService {
         hiringPost.updateHiringPost(
                 hiringPostReq.getTitle()
                 ,hiringPostReq.getDate()
-                ,hiringPostReq.getLocation()
                 ,hiringPostReq.getLevel()
                 ,hiringPostReq.getPay()
                 ,hiringPostReq.getContent()
@@ -149,6 +153,11 @@ public class HiringPostServiceImpl implements HiringPostService {
                 hiringPost.addPostSkill(postSkill);
             }
         }
+
+        Address address = addressRepository.findById(hiringPostReq.getFullCode())
+                .orElseThrow(() -> new IllegalArgumentException("addressCode doesn't exist"));
+
+        hiringPost.putAddress(address);
 
         hiringPostRepository.save(hiringPost);
     }
