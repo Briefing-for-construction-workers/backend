@@ -11,7 +11,7 @@ public class HiringPostReq {
     private String userId;
     private String title;
     private Date date;
-    private String location;
+    private String fullCode;
     private String level;
     private List<String> skills  = new ArrayList<>();
     private Integer pay;

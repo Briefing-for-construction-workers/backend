@@ -20,10 +20,13 @@ import java.util.List;
 @Entity
 public class HiringPost extends Post {
     private Date date;
-    private String location;
     private String level;
     private Integer pay;
     private boolean state;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_code")
+    private Address address;
 
     @OneToMany(mappedBy = "hiringPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostSkill> postSkillList = new ArrayList<>();
@@ -32,10 +35,9 @@ public class HiringPost extends Post {
     private List<HiringPostApply> hiringPostApplyList = new ArrayList<>();
 
     @Builder
-    public HiringPost(String title, Date date, String location, String level, Integer pay, String content, Timestamp createdAt, boolean state, User user) {
+    public HiringPost(String title, Date date, String level, Integer pay, String content, Timestamp createdAt, boolean state, User user) {
         setTitle(title);
         this.date = date;
-        this.location = location;
         this.level = level;
         this.pay = pay;
         setContent(content);
@@ -44,14 +46,15 @@ public class HiringPost extends Post {
         setUser(user);
     }
 
-    public void updateHiringPost(String title, Date date, String location, String level, Integer pay, String content) {
+    public void updateHiringPost(String title, Date date, String level, Integer pay, String content) {
         setTitle(title);
         this.date = date;
-        this.location = location;
         this.level = level;
         this.pay = pay;
         setContent(content);
     }
+
+    public void putAddress(Address address) { this.address = address; }
 
     public void addPostSkill(PostSkill postSkill) {
         this.postSkillList.add(postSkill);

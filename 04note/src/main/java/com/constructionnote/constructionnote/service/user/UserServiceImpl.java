@@ -5,10 +5,8 @@ import com.constructionnote.constructionnote.api.request.user.UserSignupReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.component.S3FileStore;
 import com.constructionnote.constructionnote.dto.user.FileDto;
-import com.constructionnote.constructionnote.entity.Profile;
-import com.constructionnote.constructionnote.entity.Skill;
-import com.constructionnote.constructionnote.entity.User;
-import com.constructionnote.constructionnote.entity.UserSkill;
+import com.constructionnote.constructionnote.entity.*;
+import com.constructionnote.constructionnote.repository.AddressRepository;
 import com.constructionnote.constructionnote.repository.ProfileRepository;
 import com.constructionnote.constructionnote.repository.SkillRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
@@ -26,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final SkillRepository skillRepository;
+    private final AddressRepository addressRepository;
 
     private final S3FileStore s3FileStore;
 
@@ -33,7 +32,6 @@ public class UserServiceImpl implements UserService {
     public void signUp(UserSignupReq userSignupReq, MultipartFile image) throws Exception {
         User user = User.builder()
                 .id(userSignupReq.getUserId())
-                .address(userSignupReq.getAddress())
                 .level(userSignupReq.getLevel())
                 .build();
 
@@ -74,6 +72,11 @@ public class UserServiceImpl implements UserService {
                 user.addUserSkill(userSkill);
             }
         }
+
+        Address address = addressRepository.findById(userSignupReq.getFullCode())
+                .orElseThrow(() -> new IllegalArgumentException("addressCode doesn't exist"));
+
+        user.putAddress(address);
 
         userRepository.save(user);
     }
