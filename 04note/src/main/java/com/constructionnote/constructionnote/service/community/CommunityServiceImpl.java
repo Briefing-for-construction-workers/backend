@@ -52,9 +52,10 @@ public class CommunityServiceImpl implements CommunityService {
         double[] boundingBox = geoUtils.getBoundingBox(address.getLat(), address.getLng(), 1.0);
         List<String> nearbyAddressCodes = addressRepository.getNearbyAddressCodeByBoundingBox(address.getLat(), address.getLng(), boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
 
-        List<Address> nearbyAdressList = addressRepository.findByAddressCodeIn(nearbyAddressCodes);
+        PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
+        List<Post> postList = postRepository.findByAddressCodeAndKeyword(pageRequest, nearbyAddressCodes, keyword);
 
-        return null;
+        return getPostDtoList(postList);
     }
 
     private List<PostDto> getPostDtoList(List<Post> postList) {
