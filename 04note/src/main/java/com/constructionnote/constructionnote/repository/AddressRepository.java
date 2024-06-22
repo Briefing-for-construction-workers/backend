@@ -12,7 +12,7 @@ public interface AddressRepository extends JpaRepository<Address, String> {
 
     @Query(
             value = "SELECT address_code " +
-                    "FROM Address " +
+                    "FROM address " +
                     "WHERE lat BETWEEN :minLat AND :maxLat " +
                     "AND lng BETWEEN :minLon AND :maxLon " +
                     "AND ST_Distance_Sphere(POINT(:lng, :lat), POINT(lng, lat)) <= 1000 ",

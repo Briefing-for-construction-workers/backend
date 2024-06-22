@@ -1,33 +1,42 @@
 package com.constructionnote.constructionnote.controller.user;
 
-import com.constructionnote.constructionnote.api.request.user.UserProfileReq;
-import com.constructionnote.constructionnote.api.request.user.UserSignupReq;
+import com.constructionnote.constructionnote.api.request.user.UserReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.service.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@Tag(name = "유저 컨트롤러", description = "유저 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestPart(value = "userSignupReq") UserSignupReq userSignupReq, @RequestPart(value = "image", required = false) MultipartFile image) {
+    @Operation(summary = "회원 등록", description = "회원의 정보를 등록")
+    @PostMapping(value = "/signup",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> signup(@RequestPart(value = "userReq") UserReq userReq, @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
-            userService.signUp(userSignupReq, image);
+            userService.signUp(userReq, image);
             return new ResponseEntity<>("success", HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
     }
 
+    @Operation(summary = "회원 확인", description = "해당 회원이 존재하는지 확인")
     @GetMapping("/exist/{userid}")
-    public ResponseEntity<?> exist(@PathVariable("userid") String userId) {
+    public ResponseEntity<?> exist(@PathVariable("userid")
+                                       @Schema(description = "유저id(토큰명)", example = "1")
+                                       String userId) {
         try {
             return new ResponseEntity<>(userService.exist(userId), HttpStatus.OK);
         } catch (Exception e) {
@@ -35,18 +44,23 @@ public class UserController {
         }
     }
 
-    @PutMapping("/profile")
-    public ResponseEntity<?> updateProfile(@RequestPart(value = "userProfileReq") UserProfileReq userProfileReq, @RequestPart(value = "image", required = false) MultipartFile image) {
+    @Operation(summary = "회원 정보 수정", description = "회원의 정보를 수정")
+    @PutMapping(value = "/profile",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateProfile(@RequestPart(value = "userReq") UserReq userReq, @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
-            userService.updateUserProfile(userProfileReq, image);
+            userService.updateUserProfile(userReq, image);
             return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
     }
 
+    @Operation(summary = "회원 프로필 조회", description = "해당 회원의 프로필 조회")
     @GetMapping("/profile/{userid}")
-    public ResponseEntity<?> getProfile(@PathVariable("userid") String userId) {
+    public ResponseEntity<?> getProfile(@PathVariable("userid")
+                                            @Schema(description = "유저id(토큰명)", example = "1")
+                                            String userId) {
         try {
             return new ResponseEntity<UserProfileRes>(userService.getUserProfile(userId), HttpStatus.OK);
         } catch (Exception e) {

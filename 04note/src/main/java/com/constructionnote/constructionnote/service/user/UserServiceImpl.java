@@ -1,13 +1,11 @@
 package com.constructionnote.constructionnote.service.user;
 
-import com.constructionnote.constructionnote.api.request.user.UserProfileReq;
-import com.constructionnote.constructionnote.api.request.user.UserSignupReq;
+import com.constructionnote.constructionnote.api.request.user.UserReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.component.S3FileStore;
 import com.constructionnote.constructionnote.dto.user.FileDto;
 import com.constructionnote.constructionnote.entity.*;
 import com.constructionnote.constructionnote.repository.AddressRepository;
-import com.constructionnote.constructionnote.repository.ProfileRepository;
 import com.constructionnote.constructionnote.repository.SkillRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -22,17 +20,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final ProfileRepository profileRepository;
     private final SkillRepository skillRepository;
     private final AddressRepository addressRepository;
 
     private final S3FileStore s3FileStore;
 
     @Override
-    public void signUp(UserSignupReq userSignupReq, MultipartFile image) throws Exception {
+    public void signUp(UserReq userReq, MultipartFile image) throws Exception {
         User user = User.builder()
-                .id(userSignupReq.getUserId())
-                .level(userSignupReq.getLevel())
+                .id(userReq.getUserId())
+                .level(userReq.getLevel())
                 .build();
 
         String imageUrl = null;
@@ -45,15 +42,15 @@ public class UserServiceImpl implements UserService {
         }
 
         Profile profile = Profile.builder()
-                .nickname(userSignupReq.getNickname())
+                .nickname(userReq.getNickname())
                 .imageUrl(imageUrl)
                 .fileName(fileName)
                 .build();
 
-        user.putProfile(profile);
+        user.putProfile(profile)    ;
 
-        if(userSignupReq.getSkills() != null) {
-            for(String skillName : userSignupReq.getSkills()) {
+        if(userReq.getSkills() != null) {
+            for(String skillName : userReq.getSkills()) {
                 Skill skill = skillRepository.findByName(skillName).orElse(null);
 
                 if(skill == null) { //Skill 테이블에 없으면 해당 스킬 저장
@@ -73,7 +70,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        Address address = addressRepository.findById(userSignupReq.getFullCode())
+        Address address = addressRepository.findById(userReq.getFullCode())
                 .orElseThrow(() -> new IllegalArgumentException("addressCode doesn't exist"));
 
         user.putAddress(address);
@@ -88,11 +85,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserProfile(UserProfileReq userProfileReq, MultipartFile image) throws Exception {
-        String userId = userProfileReq.getUserId();
+    public void updateUserProfile(UserReq userReq, MultipartFile image) throws Exception {
+        String userId = userReq.getUserId();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        user.updateUser(userReq.getLevel());
 
         if(user.getProfile().getFileName() != null) {
             s3FileStore.deleteFile(user.getProfile().getFileName());
@@ -108,9 +107,35 @@ public class UserServiceImpl implements UserService {
         }
 
         Profile profile = user.getProfile();
-        profile.updateProfile(userProfileReq.getNickname(), imageUrl, fileName);
+        profile.updateProfile(userReq.getNickname(), imageUrl, fileName);
 
-        profileRepository.save(profile);
+        if(userReq.getSkills() != null) {
+            for(String skillName : userReq.getSkills()) {
+                Skill skill = skillRepository.findByName(skillName).orElse(null);
+
+                if(skill == null) { //Skill 테이블에 없으면 해당 스킬 저장
+                    Skill skillTmp = Skill.builder()
+                            .name(skillName)
+                            .build();
+
+                    skill = skillRepository.save(skillTmp);
+                }
+
+                UserSkill userSkill = UserSkill.builder()
+                        .user(user)
+                        .skill(skill)
+                        .build();
+
+                user.addUserSkill(userSkill);
+            }
+        }
+
+        Address address = addressRepository.findById(userReq.getFullCode())
+                .orElseThrow(() -> new IllegalArgumentException("addressCode doesn't exist"));
+
+        user.putAddress(address);
+
+        userRepository.save(user);
     }
 
     @Override
