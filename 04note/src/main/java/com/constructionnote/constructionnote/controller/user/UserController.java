@@ -1,25 +1,30 @@
 package com.constructionnote.constructionnote.controller.user;
 
-import com.constructionnote.constructionnote.api.request.user.UserProfileReq;
-import com.constructionnote.constructionnote.api.request.user.UserSignupReq;
+import com.constructionnote.constructionnote.api.request.user.UserReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.service.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@Tag(name = "유저 컨트롤러", description = "유저 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestPart(value = "userSignupReq") UserSignupReq userSignupReq, @RequestPart(value = "image", required = false) MultipartFile image) {
+    @Operation(summary = "회원 등록", description = "회원의 정보를 등록")
+    @PostMapping(value = "/signup",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> signup(@RequestPart(value = "userReq") UserReq userReq, @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
-            userService.signUp(userSignupReq, image);
+            userService.signUp(userReq, image);
             return new ResponseEntity<>("success", HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
@@ -35,10 +40,12 @@ public class UserController {
         }
     }
 
-    @PutMapping("/profile")
-    public ResponseEntity<?> updateProfile(@RequestPart(value = "userProfileReq") UserProfileReq userProfileReq, @RequestPart(value = "image", required = false) MultipartFile image) {
+    @Operation(summary = "회원 정보 수정", description = "회원의 정보를 수정")
+    @PutMapping(value = "/profile",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateProfile(@RequestPart(value = "userReq") UserReq userReq, @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
-            userService.updateUserProfile(userProfileReq, image);
+            userService.updateUserProfile(userReq, image);
             return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);

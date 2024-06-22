@@ -59,6 +59,10 @@ public class User {
         this.level = level;
     }
 
+    public void updateUser(String level) {
+        this.level = level;
+    }
+
     public void putAddress(Address address) { this.address = address; }
 
     public void putProfile(Profile profile) {
