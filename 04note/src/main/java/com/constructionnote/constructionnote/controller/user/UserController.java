@@ -4,6 +4,7 @@ import com.constructionnote.constructionnote.api.request.user.UserReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,8 +32,11 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "회원 확인", description = "해당 회원이 존재하는지 확인")
     @GetMapping("/exist/{userid}")
-    public ResponseEntity<?> exist(@PathVariable("userid") String userId) {
+    public ResponseEntity<?> exist(@PathVariable("userid")
+                                       @Schema(description = "유저id(토큰명)", example = "1")
+                                       String userId) {
         try {
             return new ResponseEntity<>(userService.exist(userId), HttpStatus.OK);
         } catch (Exception e) {
@@ -52,8 +56,11 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "회원 프로필 조회", description = "해당 회원의 프로필 조회")
     @GetMapping("/profile/{userid}")
-    public ResponseEntity<?> getProfile(@PathVariable("userid") String userId) {
+    public ResponseEntity<?> getProfile(@PathVariable("userid")
+                                            @Schema(description = "유저id(토큰명)", example = "1")
+                                            String userId) {
         try {
             return new ResponseEntity<UserProfileRes>(userService.getUserProfile(userId), HttpStatus.OK);
         } catch (Exception e) {
