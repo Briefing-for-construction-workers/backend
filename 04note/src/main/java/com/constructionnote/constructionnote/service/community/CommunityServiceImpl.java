@@ -29,12 +29,6 @@ public class CommunityServiceImpl implements CommunityService {
     private final GeoUtils geoUtils;
 
     @Override
-    public List<PostDto> viewPostList() {
-        List<Post> postList = postRepository.findTop5ByOrderByCreatedAtDesc();
-        return getPostDtoList(postList);
-    }
-
-    @Override
     public List<PostDto> viewMyPostList(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
