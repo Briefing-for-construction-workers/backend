@@ -8,7 +8,6 @@ import java.util.List;
 public interface HiringReviewService {
     Long createHiringReview(HiringReviewReq hiringReviewReq);
     void updateHiringReview(Long reviewId, HiringReviewReq hiringReviewReq);
-    List<HiringReviewRes> viewReviewList(String userId) throws Exception;
-    List<HiringReviewRes> viewLimitedReviewList(String userId) throws Exception;
+    List<HiringReviewRes> viewReviewList(String userId);
     void deleteHiringReview(Long reviewId);
 }

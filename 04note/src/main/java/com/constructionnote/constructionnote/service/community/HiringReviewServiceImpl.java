@@ -3,7 +3,6 @@ package com.constructionnote.constructionnote.service.community;
 import com.constructionnote.constructionnote.api.request.community.HiringReviewReq;
 import com.constructionnote.constructionnote.api.response.community.HiringReviewRes;
 import com.constructionnote.constructionnote.component.DateProcess;
-import com.constructionnote.constructionnote.component.ImageFileStore;
 import com.constructionnote.constructionnote.entity.HiringPost;
 import com.constructionnote.constructionnote.entity.HiringReview;
 import com.constructionnote.constructionnote.entity.PostSkill;
@@ -28,7 +27,6 @@ public class HiringReviewServiceImpl implements HiringReviewService {
     private final HiringPostRepository hiringPostRepository;
     private final HiringReviewRepository hiringReviewRepository;
 
-    private final ImageFileStore imageFileStore;
     private final DateProcess dateProcess;
 
     @Override
@@ -47,6 +45,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
 
         HiringReview hiringReview = HiringReview.builder()
                 .content(hiringReviewReq.getContent())
+                .rate(hiringReviewReq.getRate())
                 .createdAt(timestamp)
                 .reviewer(reviewer)
                 .reviewee(reviewee)
@@ -69,7 +68,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
     }
 
     @Override
-    public List<HiringReviewRes> viewReviewList(String userId) throws Exception {
+    public List<HiringReviewRes> viewReviewList(String userId) {
         User reviewee = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("reviewee doesn't exist"));
 
@@ -78,17 +77,6 @@ public class HiringReviewServiceImpl implements HiringReviewService {
         List<HiringReviewRes> hiringReviewResList = new ArrayList<>();
 
         for(HiringReview hiringReview : hiringReviewList) {
-            //리뷰어 정보
-            User reviewer = userRepository.findById(hiringReview.getReviewer().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("reviewer doesn't exist"));
-
-            String profileUrl = reviewer.getProfile().getImageUrl();
-
-            byte[] image = null;
-            if(profileUrl != null) {
-                image = imageFileStore.getFile(profileUrl);
-            }
-
             //게시글 정보
             List<PostSkill> postSkillList = hiringReview.getHiringPost().getPostSkillList();
             List<String> skills  = new ArrayList<>();
@@ -100,53 +88,6 @@ public class HiringReviewServiceImpl implements HiringReviewService {
 
             HiringReviewRes hiringReviewRes = HiringReviewRes.builder()
                     .reviewId(hiringReview.getId())
-                    .nickname(hiringReview.getReviewer().getProfile().getNickname())
-                    .image(image)
-                    .skills(skills)
-                    .content(hiringReview.getContent())
-                    .relativeTime(relativeTime)
-                    .build();
-
-            hiringReviewResList.add(hiringReviewRes);
-        }
-
-        return hiringReviewResList;
-    }
-
-    @Override
-    public List<HiringReviewRes> viewLimitedReviewList(String userId) throws Exception {
-        User reviewee = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("reviewee doesn't exist"));
-
-        List<HiringReview> hiringReviewList = hiringReviewRepository.findTop3ByRevieweeOrderByCreatedAtDesc(reviewee);
-
-        List<HiringReviewRes> hiringReviewResList = new ArrayList<>();
-
-        for(HiringReview hiringReview : hiringReviewList) {
-            //리뷰어 정보
-            User reviewer = userRepository.findById(hiringReview.getReviewer().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("reviewer doesn't exist"));
-
-            String profileUrl = reviewer.getProfile().getImageUrl();
-
-            byte[] image = null;
-            if(profileUrl != null) {
-                image = imageFileStore.getFile(profileUrl);
-            }
-
-            //게시글 정보
-            List<PostSkill> postSkillList = hiringReview.getHiringPost().getPostSkillList();
-            List<String> skills  = new ArrayList<>();
-            for(PostSkill postSkill : postSkillList) {
-                skills.add(postSkill.getSkill().getName());
-            }
-
-            String relativeTime = dateProcess.convertToRelativeTime(hiringReview.getCreatedAt());
-
-            HiringReviewRes hiringReviewRes = HiringReviewRes.builder()
-                    .reviewId(hiringReview.getId())
-                    .nickname(hiringReview.getReviewer().getProfile().getNickname())
-                    .image(image)
                     .skills(skills)
                     .content(hiringReview.getContent())
                     .relativeTime(relativeTime)

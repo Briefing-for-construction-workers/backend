@@ -20,6 +20,7 @@ public class HiringReview {
     @Column(name = "hiring_review_id")
     private Long id;
     private String content;
+    private int rate;
     private Timestamp createdAt;
     private boolean deleted = Boolean.FALSE;
 
@@ -36,8 +37,9 @@ public class HiringReview {
     private HiringPost hiringPost;
 
     @Builder
-    public HiringReview(String content, Timestamp createdAt, User reviewer, User reviewee, HiringPost hiringPost) {
+    public HiringReview(String content, int rate, Timestamp createdAt, User reviewer, User reviewee, HiringPost hiringPost) {
         this.content = content;
+        this.rate = rate;
         this.createdAt = createdAt;
         this.reviewer = reviewer;
         this.reviewee = reviewee;

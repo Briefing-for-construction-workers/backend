@@ -36,20 +36,20 @@ public class HiringReviewController {
         }
     }
 
-    @GetMapping("/review/{userid}")
-    public ResponseEntity<?> list(@PathVariable("userid") String userId) {
-        try {
-            return new ResponseEntity<List<HiringReviewRes>>(hiringReviewService.viewReviewList(userId), HttpStatus.OK);
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
     @DeleteMapping("/review/{reviewid}")
     public ResponseEntity<?> deleteReview(@PathVariable("reviewid") Long reviewId) {
         try {
             hiringReviewService.deleteHiringReview(reviewId);
             return new ResponseEntity<>("success", HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @GetMapping("/review/{userid}")
+    public ResponseEntity<?> list(@PathVariable("userid") String userId) {
+        try {
+            return new ResponseEntity<List<HiringReviewRes>>(hiringReviewService.viewReviewList(userId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
