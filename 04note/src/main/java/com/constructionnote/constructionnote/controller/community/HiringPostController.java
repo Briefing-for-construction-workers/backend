@@ -1,7 +1,5 @@
 package com.constructionnote.constructionnote.controller.community;
 
-import com.constructionnote.constructionnote.api.request.community.HiringPostApplyReq;
-import com.constructionnote.constructionnote.api.request.community.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
 import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
 import com.constructionnote.constructionnote.service.community.HiringPostService;
@@ -64,39 +62,6 @@ public class HiringPostController {
                                         Long postId) {
         try {
             hiringPostService.deleteHiringPost(postId);
-            return new ResponseEntity<>("success", HttpStatus.OK);
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
-    @Operation(summary = "구인 게시글 좋아요", description = "구인 게시글을 좋아요")
-    @PostMapping("/like")
-    public ResponseEntity<?> like(@RequestBody HiringPostLikeReq hiringPostLikeReq) {
-        try {
-            Long hiringLikeId = hiringPostService.likeHiringPost(hiringPostLikeReq);
-            return new ResponseEntity<>(hiringLikeId, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
-    @Operation(summary = "구인 게시글 지원", description = "구인 게시글에 지원")
-    @PostMapping("/apply")
-    public ResponseEntity<?> apply(@RequestBody HiringPostApplyReq hiringPostApplyReq) {
-        try {
-            Long hiringPostApplyId = hiringPostService.applyHiringPost(hiringPostApplyReq);
-            return new ResponseEntity<>(hiringPostApplyId, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
-    @Operation(summary = "구인 성사 등록", description = "구인 성사를 등록")
-    @PutMapping("/pick")
-    public ResponseEntity<?> pick(@RequestBody HiringPostApplyReq hiringPostApplyReq) {
-        try {
-            hiringPostService.pickApplicant(hiringPostApplyReq);
             return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
