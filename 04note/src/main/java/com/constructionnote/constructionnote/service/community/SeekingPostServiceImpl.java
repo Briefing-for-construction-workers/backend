@@ -40,11 +40,30 @@ public class SeekingPostServiceImpl implements SeekingPostService {
                 .content(seekingPostReq.getContent())
                 .createdAt(timestamp)
                 .user(user)
-                .construction(construction)
                 .build();
+
+        seekingPost.putConstruction(construction);
 
         seekingPostRepository.save(seekingPost);
         return seekingPost.getId();
+    }
+
+    @Override
+    public void updateSeekingPost(Long postId, SeekingPostReq seekingPostReq) {
+        SeekingPost seekingPost = seekingPostRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("seekingPost doesn't exist"));
+
+        seekingPost.updateSeekingPost(
+                seekingPostReq.getTitle()
+                ,seekingPostReq.getContent()
+        );
+
+        Construction construction = constructionRepository.findById(seekingPostReq.getConstructionId())
+                .orElseThrow(() -> new IllegalArgumentException("construction doesn't exist"));
+
+        seekingPost.putConstruction(construction);
+
+        seekingPostRepository.save(seekingPost);
     }
 
     @Override
