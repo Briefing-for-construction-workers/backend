@@ -47,11 +47,11 @@ public class User {
 
     @OneToMany
     @JoinColumn(name = "reviewer_id")
-    private List<HiringReview> hiringReviewerList = new ArrayList<>();
+    private List<Review> hiringReviewerList = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "reviewee_id")
-    private List<HiringReview> hiringRevieweeList = new ArrayList<>();
+    private List<Review> hiringRevieweeList = new ArrayList<>();
 
     @Builder
     public User(String id, String level) {

@@ -48,8 +48,11 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .user(user)
                 .build();
 
+        System.out.println(hiringPostReq.getSkills().size());
+
         if(hiringPostReq.getSkills() != null) {
             for(String skillName : hiringPostReq.getSkills()) {
+
                 Skill skill = skillRepository.findByName(skillName).orElse(null);
 
                 if(skill == null) {

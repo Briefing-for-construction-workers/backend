@@ -1,14 +1,11 @@
 package com.constructionnote.constructionnote.service.community;
 
-import com.constructionnote.constructionnote.api.request.community.HiringReviewReq;
-import com.constructionnote.constructionnote.api.response.community.HiringReviewRes;
+import com.constructionnote.constructionnote.api.request.community.ReviewReq;
+import com.constructionnote.constructionnote.api.response.community.ReviewRes;
 import com.constructionnote.constructionnote.component.DateProcess;
-import com.constructionnote.constructionnote.entity.HiringPost;
-import com.constructionnote.constructionnote.entity.HiringReview;
-import com.constructionnote.constructionnote.entity.PostSkill;
-import com.constructionnote.constructionnote.entity.User;
-import com.constructionnote.constructionnote.repository.HiringPostRepository;
-import com.constructionnote.constructionnote.repository.HiringReviewRepository;
+import com.constructionnote.constructionnote.entity.*;
+import com.constructionnote.constructionnote.repository.PostRepository;
+import com.constructionnote.constructionnote.repository.ReviewRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,61 +21,62 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HiringReviewServiceImpl implements HiringReviewService {
     private final UserRepository userRepository;
-    private final HiringPostRepository hiringPostRepository;
-    private final HiringReviewRepository hiringReviewRepository;
-
+    private final PostRepository postRepository;
+    private final ReviewRepository reviewRepository;
     private final DateProcess dateProcess;
 
     @Override
-    public Long createHiringReview(HiringReviewReq hiringReviewReq) {
+    public Long createHiringReview(ReviewReq hiringReviewReq) {
         User reviewer = userRepository.findById(hiringReviewReq.getReviewerId())
                 .orElseThrow(() -> new IllegalArgumentException("reviewer doesn't exist"));
 
         User reviewee = userRepository.findById(hiringReviewReq.getRevieweeId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        HiringPost hiringPost = hiringPostRepository.findById(hiringReviewReq.getPostId())
-                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+        Post post = postRepository.findById(hiringReviewReq.getPostId())
+                .orElseThrow(() -> new IllegalArgumentException("post doesn't exist"));
 
         Date currentDate = new Date();
         Timestamp timestamp = new Timestamp(currentDate.getTime());
 
-        HiringReview hiringReview = HiringReview.builder()
+        Review hiringReview = Review.builder()
                 .content(hiringReviewReq.getContent())
                 .rate(hiringReviewReq.getRate())
                 .createdAt(timestamp)
                 .reviewer(reviewer)
                 .reviewee(reviewee)
-                .hiringPost(hiringPost)
+                .type(PostType.HIRING)
+                .post(post)
                 .build();
 
-        hiringReviewRepository.save(hiringReview);
+        reviewRepository.save(hiringReview);
 
         return hiringReview.getId();
     }
 
     @Override
-    public void updateHiringReview(Long reviewId, HiringReviewReq hiringReviewReq) {
-        HiringReview hiringReview = hiringReviewRepository.findById(reviewId)
+    public void updateHiringReview(Long reviewId, ReviewReq hiringReviewReq) {
+        Review hiringReview = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("review doesn't exist"));
 
-        hiringReview.updateHiringReview(hiringReviewReq.getContent());
+        hiringReview.updateReview(hiringReviewReq.getContent());
 
-        hiringReviewRepository.save(hiringReview);
+        reviewRepository.save(hiringReview);
     }
 
     @Override
-    public List<HiringReviewRes> viewReviewList(String userId) {
-        User reviewee = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("reviewee doesn't exist"));
+    public List<ReviewRes> viewReviewList(String userId) {
+        List<Review> hiringReviewList = reviewRepository.findReviewsByRevieweeAndPostTypeHiring(userId);
 
-        List<HiringReview> hiringReviewList = hiringReviewRepository.findByRevieweeOrderByCreatedAtDesc(reviewee);
+        System.out.println(hiringReviewList.size());
 
-        List<HiringReviewRes> hiringReviewResList = new ArrayList<>();
+        List<ReviewRes> hiringReviewResList = new ArrayList<>();
 
-        for(HiringReview hiringReview : hiringReviewList) {
+        for(Review hiringReview : hiringReviewList) {
             //게시글 정보
-            List<PostSkill> postSkillList = hiringReview.getHiringPost().getPostSkillList();
+            HiringPost hiringPost = (HiringPost)hiringReview.getPost();
+
+            List<PostSkill> postSkillList = hiringPost.getPostSkillList();
             List<String> skills  = new ArrayList<>();
             for(PostSkill postSkill : postSkillList) {
                 skills.add(postSkill.getSkill().getName());
@@ -86,9 +84,10 @@ public class HiringReviewServiceImpl implements HiringReviewService {
 
             String relativeTime = dateProcess.convertToRelativeTime(hiringReview.getCreatedAt());
 
-            HiringReviewRes hiringReviewRes = HiringReviewRes.builder()
+            ReviewRes hiringReviewRes = ReviewRes.builder()
                     .reviewId(hiringReview.getId())
                     .skills(skills)
+                    .rate(hiringReview.getRate())
                     .content(hiringReview.getContent())
                     .relativeTime(relativeTime)
                     .build();
@@ -101,7 +100,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
 
     @Override
     public void deleteHiringReview(Long reviewId) {
-        hiringReviewRepository.deleteById(reviewId);
+        reviewRepository.deleteById(reviewId);
     }
 
 }
