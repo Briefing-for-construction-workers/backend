@@ -1,9 +1,12 @@
 package com.constructionnote.constructionnote.controller.user;
 
 import com.constructionnote.constructionnote.api.request.user.UserReq;
+import com.constructionnote.constructionnote.api.response.community.ReviewRes;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.dto.community.PostDto;
 import com.constructionnote.constructionnote.service.community.HiringPostService;
+import com.constructionnote.constructionnote.service.community.HiringReviewService;
+import com.constructionnote.constructionnote.service.community.SeekingReviewService;
 import com.constructionnote.constructionnote.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,6 +27,8 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final HiringPostService hiringPostService;
+    private final HiringReviewService hiringReviewService;
+    private final SeekingReviewService seekingReviewService;
 
     @Operation(summary = "회원 등록", description = "회원의 정보를 등록")
     @PostMapping(value = "/signup",
@@ -80,6 +85,30 @@ public class UserController {
                                             String userId) {
         try {
             return new ResponseEntity<List<PostDto>>(hiringPostService.viewHiringPostByUserId(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @Operation(summary = "내 구인 후기 조회", description = "나에게 작성된 구인 후기 조회")
+    @GetMapping("/{userid}/hiring/review")
+    public ResponseEntity<?> viewHiringReviewList(@PathVariable("userid")
+                                  @Schema(description = "유저id(토큰명)", example = "1")
+                                  String userId) {
+        try {
+            return new ResponseEntity<List<ReviewRes>>(hiringReviewService.viewHiringReviewList(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @Operation(summary = "내 구직 후기 조회", description = "나에게 작성된 구직 후기 조회")
+    @GetMapping("/{userid}/seeking/review")
+    public ResponseEntity<?> viewSeekingReviewList(@PathVariable("userid")
+                                  @Schema(description = "유저id(토큰명)", example = "1")
+                                  String userId) {
+        try {
+            return new ResponseEntity<List<ReviewRes>>(seekingReviewService.viewSeekingReviewList(userId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
