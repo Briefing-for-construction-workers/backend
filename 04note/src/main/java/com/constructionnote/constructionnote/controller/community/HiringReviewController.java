@@ -64,7 +64,7 @@ public class HiringReviewController {
                                       @Schema(description = "유저id(토큰명)", example = "1")
                                       String userId) {
         try {
-            return new ResponseEntity<List<ReviewRes>>(hiringReviewService.viewReviewList(userId), HttpStatus.OK);
+            return new ResponseEntity<List<ReviewRes>>(hiringReviewService.viewHiringReviewList(userId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }

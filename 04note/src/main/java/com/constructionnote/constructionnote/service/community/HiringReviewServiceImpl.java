@@ -65,7 +65,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
     }
 
     @Override
-    public List<ReviewRes> viewReviewList(String userId) {
+    public List<ReviewRes> viewHiringReviewList(String userId) {
         List<Review> hiringReviewList = reviewRepository.findReviewsByRevieweeAndPostTypeHiring(userId);
 
         System.out.println(hiringReviewList.size());
