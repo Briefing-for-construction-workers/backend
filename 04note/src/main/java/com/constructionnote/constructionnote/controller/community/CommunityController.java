@@ -37,18 +37,6 @@ public class CommunityController {
         }
     }
 
-    @Operation(summary = "나의 구인구직 조회", description = "내가 쓴 구인구직 게시글 조회")
-    @GetMapping("/post/{userid}")
-    public ResponseEntity<?> viewMyPostList(@PathVariable("userid")
-                                                @Schema(description = "유저id(토큰명)", example = "1")
-                                                String userId) {
-        try {
-            return new ResponseEntity<List<PostDto>>(communityService.viewMyPostList(userId), HttpStatus.OK);
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
     private ResponseEntity<?> exceptionHandling(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

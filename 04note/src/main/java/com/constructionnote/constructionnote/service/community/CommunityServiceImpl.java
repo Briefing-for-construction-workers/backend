@@ -6,7 +6,6 @@ import com.constructionnote.constructionnote.dto.community.PostDto;
 import com.constructionnote.constructionnote.entity.*;
 import com.constructionnote.constructionnote.repository.AddressRepository;
 import com.constructionnote.constructionnote.repository.PostRepository;
-import com.constructionnote.constructionnote.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -22,21 +21,10 @@ public class CommunityServiceImpl implements CommunityService {
     static final int PAGE_SIZE = 10;
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final AddressRepository addressRepository;
 
     private final DateProcess dateProcess;
     private final GeoUtils geoUtils;
-
-    @Override
-    public List<PostDto> viewMyPostList(String userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
-
-        List<Post> postList = postRepository.findByUserOrderByCreatedAtDesc(user);
-
-        return getPostDtoList(postList);
-    }
 
     @Override
     public List<PostDto> viewPostListByFilter(Integer page, String fullCode, String keyword) {
