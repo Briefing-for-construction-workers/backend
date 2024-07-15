@@ -4,7 +4,9 @@ import com.constructionnote.constructionnote.api.request.community.HiringPostApp
 import com.constructionnote.constructionnote.api.request.community.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
 import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
+import com.constructionnote.constructionnote.component.DateProcess;
 import com.constructionnote.constructionnote.dto.community.HiringPostDto;
+import com.constructionnote.constructionnote.dto.community.PostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
 import com.constructionnote.constructionnote.entity.*;
 import com.constructionnote.constructionnote.repository.*;
@@ -28,6 +30,8 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final HiringPostApplyRepository hiringPostApplyRepository;
     private final SkillRepository skillRepository;
     private final AddressRepository addressRepository;
+
+    private final DateProcess dateProcess;
 
     @Override
     public Long registerHiringPost(HiringPostReq hiringPostReq) {
@@ -168,6 +172,36 @@ public class HiringPostServiceImpl implements HiringPostService {
     @Override
     public void deleteHiringPost(Long postId) {
         postRepository.deleteById(postId);
+    }
+
+    @Override
+    public List<PostDto> viewHiringPostByUserId(String userId) {
+        List<HiringPost> hiringPostList = hiringPostRepository.findByUserIdOrderByCreatedAtDesc(userId);
+
+        List<PostDto> postDtoList = new ArrayList<>();
+        for(HiringPost hiringPost : hiringPostList) {
+            String relativeTime = dateProcess.convertToRelativeTime(hiringPost.getCreatedAt());
+
+            List<PostSkill> postSkillList = hiringPost.getPostSkillList();
+            List<String> skills  = new ArrayList<>();
+            for(PostSkill postSkill : postSkillList) {
+                skills.add(postSkill.getSkill().getName());
+            }
+
+            PostDto postDto = PostDto.builder()
+                    .postId(hiringPost.getId())
+                    .postType("구인")
+                    .title(hiringPost.getTitle())
+                    .skills(skills)
+                    .level(hiringPost.getLevel())
+                    .date(hiringPost.getDate())
+                    .relativeTime(relativeTime)
+                    .build();
+
+            postDtoList.add(postDto);
+        }
+
+        return postDtoList;
     }
 
     @Override

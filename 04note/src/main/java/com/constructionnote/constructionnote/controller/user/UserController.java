@@ -2,6 +2,8 @@ package com.constructionnote.constructionnote.controller.user;
 
 import com.constructionnote.constructionnote.api.request.user.UserReq;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
+import com.constructionnote.constructionnote.dto.community.PostDto;
+import com.constructionnote.constructionnote.service.community.HiringPostService;
 import com.constructionnote.constructionnote.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,12 +15,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Tag(name = "유저 컨트롤러", description = "유저 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
+    private final HiringPostService hiringPostService;
 
     @Operation(summary = "회원 등록", description = "회원의 정보를 등록")
     @PostMapping(value = "/signup",
@@ -57,12 +62,24 @@ public class UserController {
     }
 
     @Operation(summary = "회원 프로필 조회", description = "해당 회원의 프로필 조회")
-    @GetMapping("/profile/{userid}")
+    @GetMapping("/{userid}/profile")
     public ResponseEntity<?> getProfile(@PathVariable("userid")
                                             @Schema(description = "유저id(토큰명)", example = "1")
                                             String userId) {
         try {
             return new ResponseEntity<UserProfileRes>(userService.getUserProfile(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @Operation(summary = "내 구인 게시글 조회", description = "내가 작성한 구인 게시글을 조회")
+    @GetMapping("/{userid}/hiring")
+    public ResponseEntity<?> viewMyPostList(@PathVariable("userid")
+                                            @Schema(description = "유저id(토큰명)", example = "1")
+                                            String userId) {
+        try {
+            return new ResponseEntity<List<PostDto>>(hiringPostService.viewHiringPostByUserId(userId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
