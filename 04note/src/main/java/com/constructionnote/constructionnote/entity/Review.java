@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@SQLDelete(sql = "UPDATE review SET deleted = true WHERE hiring_review_id = ?")
+@SQLDelete(sql = "UPDATE review SET deleted = true WHERE review_id = ?")
 @SQLRestriction("deleted = false")
 public class Review {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -68,10 +68,7 @@ public class HiringReviewServiceImpl implements HiringReviewService {
     public List<ReviewRes> viewHiringReviewList(String userId) {
         List<Review> hiringReviewList = reviewRepository.findReviewsByRevieweeAndPostTypeHiring(userId);
 
-        System.out.println(hiringReviewList.size());
-
         List<ReviewRes> hiringReviewResList = new ArrayList<>();
-
         for(Review hiringReview : hiringReviewList) {
             //게시글 정보
             HiringPost hiringPost = (HiringPost)hiringReview.getPost();

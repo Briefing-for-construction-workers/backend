@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ReviewCustomRepository {
     List<Review> findReviewsByRevieweeAndPostTypeHiring(String revieweeId);
+    List<Review> findReviewsByRevieweeAndPostTypeSeeking(String revieweeId);
 }
