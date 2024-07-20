@@ -6,6 +6,7 @@ import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.dto.community.PostDto;
 import com.constructionnote.constructionnote.service.community.HiringPostService;
 import com.constructionnote.constructionnote.service.community.HiringReviewService;
+import com.constructionnote.constructionnote.service.community.SeekingPostService;
 import com.constructionnote.constructionnote.service.community.SeekingReviewService;
 import com.constructionnote.constructionnote.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final HiringPostService hiringPostService;
+    private final SeekingPostService seekingPostService;
     private final HiringReviewService hiringReviewService;
     private final SeekingReviewService seekingReviewService;
 
@@ -80,11 +82,23 @@ public class UserController {
 
     @Operation(summary = "내 구인 게시글 조회", description = "내가 작성한 구인 게시글을 조회")
     @GetMapping("/{userid}/hiring")
-    public ResponseEntity<?> viewMyPostList(@PathVariable("userid")
+    public ResponseEntity<?> viewMyHiringPostList(@PathVariable("userid")
                                             @Schema(description = "유저id(토큰명)", example = "1")
                                             String userId) {
         try {
             return new ResponseEntity<List<PostDto>>(hiringPostService.viewHiringPostByUserId(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @Operation(summary = "내 구직 게시글 조회", description = "내가 작성한 구직 게시글을 조회")
+    @GetMapping("/{userid}/seeking")
+    public ResponseEntity<?> viewMySeekingPostList(@PathVariable("userid")
+                                            @Schema(description = "유저id(토큰명)", example = "1")
+                                            String userId) {
+        try {
+            return new ResponseEntity<List<PostDto>>(seekingPostService.viewSeekingPostByUserId(userId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
