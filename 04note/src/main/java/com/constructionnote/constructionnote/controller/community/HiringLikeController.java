@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class HiringLikeController {
     private final HiringLikeService hiringLikeService;
 
-    @Operation(summary = "구인 게시글 좋아요", description = "구인 게시글을 좋아요")
+    @Operation(summary = "구인 게시글 좋아요/취소", description = "구인 게시글을 좋아요 하거나 취소")
     @PostMapping("/like")
     public ResponseEntity<?> like(@RequestBody PostLikeReq hiringPostLikeReq) {
         try {
-            Long hiringLikeId = hiringLikeService.likeHiringPost(hiringPostLikeReq);
-            return new ResponseEntity<>(hiringLikeId, HttpStatus.CREATED);
+            String result = hiringLikeService.likeHiringPost(hiringPostLikeReq);
+            return new ResponseEntity<>(result, HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
         }

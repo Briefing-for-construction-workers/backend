@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -23,24 +24,38 @@ public class HiringLikeServiceImpl implements HiringLikeService {
     private final PostLikeRepository postLikeRepository;
 
     @Override
-    public Long likeHiringPost(PostLikeReq hiringPostLikeReq) {
+    public String likeHiringPost(PostLikeReq hiringPostLikeReq) {
         User user = userRepository.findById(hiringPostLikeReq.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
         Post post = postRepository.findById(hiringPostLikeReq.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("post doesn't exist"));
 
-        Date currentDate = new Date();
-        Timestamp timestamp = new Timestamp(currentDate.getTime());
+        Optional<PostLike> postLikeOptional = postLikeRepository.findByUserAndPost(user, post);
 
-        PostLike postLike = PostLike.builder()
-                .createdAt(timestamp)
-                .user(user)
-                .post(post)
-                .build();
+        if(postLikeOptional.isPresent()) { //이미 좋아요함
+            //삭제된적 없음 = 좋아요 취소 가능
+            if(!postLikeOptional.get().isDeleted()) {
+                postLikeRepository.delete(postLikeOptional.get());
+                return "좋아요 취소";
+            } else { //삭제된적 있음 = 다시 좋아요 가능
+                postLikeRepository.reSave(postLikeOptional.get().getId());
+                return "좋아요 재등록";
+            }
+        } else { //좋아요 처음함
+            Date currentDate = new Date();
+            Timestamp timestamp = new Timestamp(currentDate.getTime());
 
-        postLikeRepository.save(postLike);
+            PostLike postLike = PostLike.builder()
+                    .createdAt(timestamp)
+                    .user(user)
+                    .post(post)
+                    .build();
 
-        return postLike.getId();
+            postLikeRepository.save(postLike);
+
+            return "좋아요 등록";
+        }
+
     }
 }
