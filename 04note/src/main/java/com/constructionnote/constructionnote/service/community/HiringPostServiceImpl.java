@@ -1,7 +1,6 @@
 package com.constructionnote.constructionnote.service.community;
 
 import com.constructionnote.constructionnote.api.request.community.HiringPostApplyReq;
-import com.constructionnote.constructionnote.api.request.community.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
 import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
 import com.constructionnote.constructionnote.component.DateProcess;
@@ -26,7 +25,7 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final HiringPostRepository hiringPostRepository;
-    private final HiringLikeRepository hiringLikeRepository;
+    private final PostLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
     private final SkillRepository skillRepository;
     private final AddressRepository addressRepository;
@@ -202,28 +201,6 @@ public class HiringPostServiceImpl implements HiringPostService {
         }
 
         return postDtoList;
-    }
-
-    @Override
-    public Long likeHiringPost(HiringPostLikeReq hiringPostLikeReq) {
-        User user = userRepository.findById(hiringPostLikeReq.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
-
-        HiringPost hiringPost = hiringPostRepository.findById(hiringPostLikeReq.getPostId())
-                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
-
-        Date currentDate = new Date();
-        Timestamp timestamp = new Timestamp(currentDate.getTime());
-
-        HiringLike hiringLike = HiringLike.builder()
-                .createdAt(timestamp)
-                .user(user)
-                .hiringPost(hiringPost)
-                .build();
-
-        hiringLikeRepository.save(hiringLike);
-
-        return hiringLike.getId();
     }
 
     @Override

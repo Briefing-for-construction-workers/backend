@@ -11,10 +11,10 @@ import java.sql.Timestamp;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class HiringLike {
+public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hiring_like_id")
+    @Column(name = "post_like_id")
     private Long id;
     private Timestamp createdAt;
 
@@ -22,14 +22,14 @@ public class HiringLike {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "hiring_post_id")
-    private HiringPost hiringPost;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @Builder
-    public HiringLike(Timestamp createdAt, User user, HiringPost hiringPost) {
+    public PostLike(Timestamp createdAt, User user, Post post) {
         this.createdAt = createdAt;
         this.user = user;
-        this.hiringPost = hiringPost;
+        this.post = post;
     }
 }

@@ -1,7 +1,7 @@
 package com.constructionnote.constructionnote.controller.community;
 
-import com.constructionnote.constructionnote.api.request.community.HiringPostLikeReq;
-import com.constructionnote.constructionnote.service.community.HiringPostService;
+import com.constructionnote.constructionnote.api.request.community.PostLikeReq;
+import com.constructionnote.constructionnote.service.community.HiringLikeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/hiring")
 public class HiringLikeController {
-    private final HiringPostService hiringPostService;
+    private final HiringLikeService hiringLikeService;
 
     @Operation(summary = "구인 게시글 좋아요", description = "구인 게시글을 좋아요")
     @PostMapping("/like")
-    public ResponseEntity<?> like(@RequestBody HiringPostLikeReq hiringPostLikeReq) {
+    public ResponseEntity<?> like(@RequestBody PostLikeReq hiringPostLikeReq) {
         try {
-            Long hiringLikeId = hiringPostService.likeHiringPost(hiringPostLikeReq);
+            Long hiringLikeId = hiringLikeService.likeHiringPost(hiringPostLikeReq);
             return new ResponseEntity<>(hiringLikeId, HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
