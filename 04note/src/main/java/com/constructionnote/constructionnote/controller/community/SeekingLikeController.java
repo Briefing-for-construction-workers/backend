@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "구인 게시글 좋아요 컨트롤러", description = "구인 게시글 좋아요 관련 API")
+@Tag(name = "구직 게시글 좋아요 컨트롤러", description = "구직 게시글 좋아요 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/hiring")
-public class HiringLikeController {
+@RequestMapping("/api/seeking")
+public class SeekingLikeController {
     private final PostLikeService postLikeService;
 
-    @Operation(summary = "구인 게시글 좋아요/취소", description = "구인 게시글을 좋아요 하거나 취소")
+    @Operation(summary = "구직 게시글 좋아요/취소", description = "구직 게시글을 좋아요 하거나 취소")
     @PostMapping("/like")
     public ResponseEntity<?> like(@RequestBody PostLikeReq postLikeReq) {
         try {
