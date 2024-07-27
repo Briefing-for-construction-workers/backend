@@ -4,10 +4,7 @@ import com.constructionnote.constructionnote.api.request.user.UserReq;
 import com.constructionnote.constructionnote.api.response.community.ReviewRes;
 import com.constructionnote.constructionnote.api.response.user.UserProfileRes;
 import com.constructionnote.constructionnote.dto.community.PostDto;
-import com.constructionnote.constructionnote.service.community.HiringPostService;
-import com.constructionnote.constructionnote.service.community.HiringReviewService;
-import com.constructionnote.constructionnote.service.community.SeekingPostService;
-import com.constructionnote.constructionnote.service.community.SeekingReviewService;
+import com.constructionnote.constructionnote.service.community.*;
 import com.constructionnote.constructionnote.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,6 +28,7 @@ public class UserController {
     private final SeekingPostService seekingPostService;
     private final HiringReviewService hiringReviewService;
     private final SeekingReviewService seekingReviewService;
+    private final PostLikeService postLikeService;
 
     @Operation(summary = "회원 등록", description = "회원의 정보를 등록")
     @PostMapping(value = "/signup",
@@ -123,6 +121,18 @@ public class UserController {
                                   String userId) {
         try {
             return new ResponseEntity<List<ReviewRes>>(seekingReviewService.viewSeekingReviewList(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @Operation(summary = "내 좋아요 구인 게시글 조회", description = "내가 좋아요한 구인 게시글 조회")
+    @GetMapping("/{userid}/hiring/like")
+    public ResponseEntity<?> viewHiringLikeList(@PathVariable("userid")
+                                                  @Schema(description = "유저id(토큰명)", example = "1")
+                                                  String userId) {
+        try {
+            return new ResponseEntity<List<PostDto>>(postLikeService.viewLikedHiringPostsByUserId(userId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }

@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
+public interface PostLikeRepository extends JpaRepository<PostLike, Long>, PostLikeCustomRepository {
     Optional<PostLike> findByUserAndPost(User user, Post post);
 
     @Modifying
