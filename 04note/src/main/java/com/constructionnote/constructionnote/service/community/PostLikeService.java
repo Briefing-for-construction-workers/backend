@@ -9,4 +9,5 @@ public interface PostLikeService {
     String likePost(PostLikeReq postLikeReq);
 
     List<PostDto> viewLikedHiringPostsByUserId(String userId);
+    List<PostDto> viewLikedSeekingPostsByUserId(String userId);
 }

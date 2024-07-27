@@ -138,6 +138,18 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "내 좋아요 구직 게시글 조회", description = "내가 좋아요한 구직 게시글 조회")
+    @GetMapping("/{userid}/seeking/like")
+    public ResponseEntity<?> viewSeekingLikeList(@PathVariable("userid")
+                                                 @Schema(description = "유저id(토큰명)", example = "1")
+                                                 String userId) {
+        try {
+            return new ResponseEntity<List<PostDto>>(postLikeService.viewLikedSeekingPostsByUserId(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     private ResponseEntity<?> exceptionHandling(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

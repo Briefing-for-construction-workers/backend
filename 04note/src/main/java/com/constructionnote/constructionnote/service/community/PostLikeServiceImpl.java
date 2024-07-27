@@ -93,4 +93,34 @@ public class PostLikeServiceImpl implements PostLikeService {
         return postDtoList;
     }
 
+    @Override
+    public List<PostDto> viewLikedSeekingPostsByUserId(String userId) {
+        List<SeekingPost> seekingPostList = postLikeRepository.findLikedSeekingPostsByUserId(userId);
+
+        List<PostDto> postDtoList = new ArrayList<>();
+        for(SeekingPost seekingPost : seekingPostList) {
+            String relativeTime = dateProcess.convertToRelativeTime(seekingPost.getCreatedAt());
+
+            List<UserSkill> userSkillList = seekingPost.getUser().getUserSkillList();
+            List<String> skills  = new ArrayList<>();
+            for(UserSkill userSkill : userSkillList) {
+                skills.add(userSkill.getSkill().getName());
+            }
+
+            PostDto postDto = PostDto.builder()
+                    .postId(seekingPost.getId())
+                    .postType("구직")
+                    .title(seekingPost.getTitle())
+                    .skills(skills)
+                    .level(seekingPost.getUser().getLevel())
+                    .date(null)
+                    .relativeTime(relativeTime)
+                    .build();
+
+            postDtoList.add(postDto);
+        }
+
+        return postDtoList;
+    }
+
 }
