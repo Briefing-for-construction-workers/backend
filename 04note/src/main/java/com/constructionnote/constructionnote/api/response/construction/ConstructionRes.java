@@ -1,4 +1,4 @@
-package com.constructionnote.constructionnote.api.response;
+package com.constructionnote.constructionnote.api.response.construction;
 
 import com.constructionnote.constructionnote.dto.construction.*;
 import lombok.AccessLevel;

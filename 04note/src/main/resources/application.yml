@@ -2,11 +2,14 @@ spring:
   application:
     name: 04note
 
+  profiles:
+    include: aws
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://34.64.142.137:3306/04note?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: root1234
+    password: team0492
 
   jpa:
     hibernate:
@@ -15,3 +18,12 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+
+#file path
+file:
+  dir: ./images

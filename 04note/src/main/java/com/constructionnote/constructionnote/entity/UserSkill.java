@@ -3,27 +3,28 @@ package com.constructionnote.constructionnote.entity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class ConstructionUser {
+public class UserSkill {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "construction_user_id")
-    private Long id;
+    @Column(name = "user_skill_id")
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "construction_id")
-    private Construction construction;
+    @JoinColumn(name = "skill_id")
+    private Skill skill;
 
     @Builder
-    public ConstructionUser(User user, Construction construction) {
+    public UserSkill(User user, Skill skill) {
         this.user = user;
-        this.construction = construction;
+        this.skill = skill;
     }
-
 }

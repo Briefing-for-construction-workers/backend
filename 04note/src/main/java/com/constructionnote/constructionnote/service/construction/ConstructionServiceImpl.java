@@ -1,10 +1,9 @@
-package com.constructionnote.constructionnote.service;
+package com.constructionnote.constructionnote.service.construction;
 
-import com.constructionnote.constructionnote.api.request.ConstructionReq;
-import com.constructionnote.constructionnote.api.response.ConstructionRes;
+import com.constructionnote.constructionnote.api.request.construction.ConstructionReq;
+import com.constructionnote.constructionnote.api.response.construction.ConstructionRes;
 import com.constructionnote.constructionnote.dto.construction.*;
 import com.constructionnote.constructionnote.entity.Construction;
-import com.constructionnote.constructionnote.entity.ConstructionUser;
 import com.constructionnote.constructionnote.entity.User;
 import com.constructionnote.constructionnote.repository.ConstructionRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
@@ -22,7 +21,10 @@ public class ConstructionServiceImpl implements ConstructionService {
     private final UserRepository userRepository;
 
     @Override
-    public void registerConstruction(ConstructionReq constructionReq) {
+    public Long registerConstruction(ConstructionReq constructionReq) {
+        User user = userRepository.findById(constructionReq.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
         Construction construction = Construction.builder()
                 .kind(constructionReq.getKind())
                 .timeBegin(constructionReq.getSchedule().getTimeBegin())
@@ -32,19 +34,11 @@ public class ConstructionServiceImpl implements ConstructionService {
                 .dong(constructionReq.getConstructionSite().getAddress().getDong())
                 .workSiteDescription(constructionReq.getConstructionSite().getWorkSiteDescription())
                 .memo(constructionReq.getMemo())
-                .build();
-
-        User user = userRepository.findById(constructionReq.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
-
-        ConstructionUser constructionUser = ConstructionUser.builder()
                 .user(user)
-                .construction(construction)
                 .build();
-
-        construction.addConstructionUser(constructionUser);
 
         constructionRepository.save(construction);
+        return construction.getId();
     }
 
     @Override
@@ -65,6 +59,28 @@ public class ConstructionServiceImpl implements ConstructionService {
                 .constructionSite(ConstructionSite.createConstructionSite(construction.getCity(), construction.getDistrict(), construction.getDong(), construction.getWorkSiteDescription()))
                 .memo(construction.getMemo())
                 .build();
+    }
+
+    @Override
+    public Long updateConstruction(Long constructionId, ConstructionReq constructionReq) {
+        Construction construction = constructionRepository.findById(constructionId)
+                .orElseThrow(() -> new IllegalArgumentException("construction doesn't exist"));
+
+        User user = userRepository.findById(constructionReq.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        String kind = constructionReq.getKind();
+        Date timeBegin = constructionReq.getSchedule().getTimeBegin();
+        Date timeEnd = constructionReq.getSchedule().getTimeEnd();
+        String city = constructionReq.getConstructionSite().getAddress().getCity();
+        String district = constructionReq.getConstructionSite().getAddress().getDistrict();
+        String dong = constructionReq.getConstructionSite().getAddress().getDong();
+        String workSiteDescription = constructionReq.getConstructionSite().getWorkSiteDescription();
+        String memo = constructionReq.getMemo();
+
+        construction.updateConstruction(kind, timeBegin, timeEnd, city, district, dong, workSiteDescription, memo, user);
+        constructionRepository.save(construction);
+        return construction.getId();
     }
 
     private StatusType getStatus(Date timeBegin, Date timeEnd) {

@@ -1,0 +1,12 @@
+cloud:
+  aws:
+    s3:
+      bucket: 04note-bucket
+    credentials:
+      access-key: AKIAW3MEBIMDQCC262IZ
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
