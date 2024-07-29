@@ -25,7 +25,6 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final HiringPostRepository hiringPostRepository;
-    private final PostLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
     private final SkillRepository skillRepository;
     private final AddressRepository addressRepository;
@@ -238,6 +237,15 @@ public class HiringPostServiceImpl implements HiringPostService {
         hiringPostApply.pickApplicant();
 
         hiringPostApplyRepository.save(hiringPostApply);
+    }
+
+    @Override
+    public void updateHiringState(Long postId) {
+        HiringPost hiringPost = hiringPostRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+
+        hiringPost.updateState();
+        hiringPostRepository.save(hiringPost);
     }
 
 }

@@ -68,6 +68,19 @@ public class HiringPostController {
         }
     }
 
+    @Operation(summary = "구인 게시글 모집 상태 변경", description = "게시글id에 해당하는 구인 게시글을 모집 상태를 변경")
+    @PutMapping("/{postid}/complete")
+    public ResponseEntity<?> updateState(@PathVariable("postid")
+                                    @Schema(description = "게시글id", example = "1")
+                                    Long postId) {
+        try {
+            hiringPostService.updateHiringState(postId);
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     private ResponseEntity<?> exceptionHandling(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

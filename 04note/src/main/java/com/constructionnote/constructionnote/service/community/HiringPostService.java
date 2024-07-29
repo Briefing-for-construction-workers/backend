@@ -16,4 +16,6 @@ public interface HiringPostService {
 
     Long applyHiringPost(HiringPostApplyReq hiringPostApplyReq);
     void pickApplicant(HiringPostApplyReq hiringPostApplyReq);
+
+    void updateHiringState(Long postId);
 }

@@ -59,4 +59,6 @@ public class HiringPost extends Post {
     public void addPostSkill(PostSkill postSkill) {
         this.postSkillList.add(postSkill);
     }
+
+    public void updateState() { state = !this.state; }
 }
