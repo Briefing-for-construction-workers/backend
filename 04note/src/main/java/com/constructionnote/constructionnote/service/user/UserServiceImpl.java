@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .id(userReq.getUserId())
                 .level(userReq.getLevel())
+                .state(false)
                 .build();
 
         String imageUrl = null;
@@ -91,7 +92,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
 
-        user.updateUser(userReq.getLevel());
+        user.updateLevel(userReq.getLevel());
 
         if(user.getProfile().getFileName() != null) {
             s3FileStore.deleteFile(user.getProfile().getFileName());
@@ -149,5 +150,14 @@ public class UserServiceImpl implements UserService {
                 .nickname(user.getProfile().getNickname())
                 .imageUrl(imageUrl)
                 .build();
+    }
+
+    @Override
+    public void updateSeekingState(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+
+        user.updateState();
+        userRepository.save(user);
     }
 }

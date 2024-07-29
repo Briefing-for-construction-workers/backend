@@ -78,6 +78,19 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "내 구직 상태 변경", description = "해당 회원의 구직 상태를 변경")
+    @PutMapping("/{userid}/state")
+    public ResponseEntity<?> updateSeekingState(@PathVariable("userid")
+                                        @Schema(description = "유저id(토큰명)", example = "1")
+                                        String userId) {
+        try {
+            userService.updateSeekingState(userId);
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     @Operation(summary = "내 구인 게시글 조회", description = "내가 작성한 구인 게시글을 조회")
     @GetMapping("/{userid}/hiring")
     public ResponseEntity<?> viewMyHiringPostList(@PathVariable("userid")

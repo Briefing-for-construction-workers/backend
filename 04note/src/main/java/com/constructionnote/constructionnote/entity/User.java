@@ -17,6 +17,7 @@ public class User {
     @Column(name = "user_id")
     private String id;
     private String level;
+    private boolean state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_code")
@@ -54,13 +55,18 @@ public class User {
     private List<Review> revieweeList = new ArrayList<>();
 
     @Builder
-    public User(String id, String level) {
+    public User(String id, String level, boolean state) {
         this.id = id;
+        this.level = level;
+        this.state = state;
+    }
+
+    public void updateLevel(String level) {
         this.level = level;
     }
 
-    public void updateUser(String level) {
-        this.level = level;
+    public void updateState() {
+        state = !this.state;
     }
 
     public void putAddress(Address address) { this.address = address; }
