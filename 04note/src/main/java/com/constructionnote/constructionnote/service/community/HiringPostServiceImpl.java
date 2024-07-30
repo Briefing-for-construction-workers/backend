@@ -2,9 +2,8 @@ package com.constructionnote.constructionnote.service.community;
 
 import com.constructionnote.constructionnote.api.request.community.HiringPostApplyReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
-import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
 import com.constructionnote.constructionnote.component.DateProcess;
-import com.constructionnote.constructionnote.dto.community.HiringPostDto;
+import com.constructionnote.constructionnote.api.response.community.HiringPostRes;
 import com.constructionnote.constructionnote.dto.community.PostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
 import com.constructionnote.constructionnote.entity.*;
@@ -84,7 +83,7 @@ public class HiringPostServiceImpl implements HiringPostService {
     }
 
     @Override
-    public HiringPostDetailRes viewHiringPostById(Long postId) throws Exception {
+    public HiringPostRes viewHiringPostById(Long postId) throws Exception {
         HiringPost hiringPost = hiringPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
@@ -108,7 +107,7 @@ public class HiringPostServiceImpl implements HiringPostService {
             skills.add(postSkill.getSkill().getName());
         }
 
-        HiringPostDto hiringPostDto = HiringPostDto.builder()
+        return HiringPostRes.builder()
                 .title(hiringPost.getTitle())
                 .skills(skills)
                 .location(hiringPost.getAddress().getFullAddressName())
@@ -116,12 +115,7 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .level(hiringPost.getLevel())
                 .pay(hiringPost.getPay())
                 .content(hiringPost.getContent())
-                .build();
-
-        return HiringPostDetailRes.builder()
-                .profileDto(profileDto)
-                .kind("구인")
-                .hiringPostDto(hiringPostDto)
+                .state(hiringPost.stateToVocab())
                 .build();
     }
 
@@ -189,6 +183,7 @@ public class HiringPostServiceImpl implements HiringPostService {
             PostDto postDto = PostDto.builder()
                     .postId(hiringPost.getId())
                     .postType("구인")
+                    .state(hiringPost.stateToVocab())
                     .title(hiringPost.getTitle())
                     .skills(skills)
                     .level(hiringPost.getLevel())

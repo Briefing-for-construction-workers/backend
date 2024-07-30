@@ -61,4 +61,8 @@ public class HiringPost extends Post {
     }
 
     public void updateState() { state = !this.state; }
+
+    public String stateToVocab() {
+        return this.state ? "구직 완료" : "구직중";
+    }
 }

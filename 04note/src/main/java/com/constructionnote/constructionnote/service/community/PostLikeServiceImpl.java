@@ -80,6 +80,7 @@ public class PostLikeServiceImpl implements PostLikeService {
             PostDto postDto = PostDto.builder()
                     .postId(hiringPost.getId())
                     .postType("구인")
+                    .state(hiringPost.stateToVocab())
                     .title(hiringPost.getTitle())
                     .skills(skills)
                     .level(hiringPost.getLevel())

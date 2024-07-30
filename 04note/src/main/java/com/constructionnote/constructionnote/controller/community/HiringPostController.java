@@ -1,7 +1,7 @@
 package com.constructionnote.constructionnote.controller.community;
 
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
-import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
+import com.constructionnote.constructionnote.api.response.community.HiringPostRes;
 import com.constructionnote.constructionnote.service.community.HiringPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,7 +35,7 @@ public class HiringPostController {
                                       @Schema(description = "게시글id", example = "1")
                                       Long postId) {
         try {
-            return new ResponseEntity<HiringPostDetailRes>(hiringPostService.viewHiringPostById(postId), HttpStatus.OK);
+            return new ResponseEntity<HiringPostRes>(hiringPostService.viewHiringPostById(postId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
