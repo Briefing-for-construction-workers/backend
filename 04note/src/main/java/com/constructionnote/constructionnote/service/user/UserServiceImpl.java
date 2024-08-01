@@ -6,6 +6,7 @@ import com.constructionnote.constructionnote.component.S3FileStore;
 import com.constructionnote.constructionnote.dto.user.FileDto;
 import com.constructionnote.constructionnote.entity.*;
 import com.constructionnote.constructionnote.repository.AddressRepository;
+import com.constructionnote.constructionnote.repository.SeekingPostRepository;
 import com.constructionnote.constructionnote.repository.SkillRepository;
 import com.constructionnote.constructionnote.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
     private final AddressRepository addressRepository;
+    private final SeekingPostRepository seekingPostRepository;
 
     private final S3FileStore s3FileStore;
 
@@ -159,5 +161,9 @@ public class UserServiceImpl implements UserService {
 
         user.updateState();
         userRepository.save(user);
+
+        if(!user.isState()) { //구직 상태면, 모든 게시글 활성 상태 false 로 바꿈
+            seekingPostRepository.updateActivatedByUserId(userId);
+        }
     }
 }
