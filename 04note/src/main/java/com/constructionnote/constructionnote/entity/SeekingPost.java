@@ -19,13 +19,15 @@ public class SeekingPost extends Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "construction_id")
     private Construction construction;
+    private boolean activated;
 
     @Builder
-    public SeekingPost(String title, String content, Timestamp createdAt, User user) {
+    public SeekingPost(String title, String content, Timestamp createdAt, User user, boolean activated) {
         setTitle(title);
         setContent(content);
         setCreatedAt(createdAt);
         setUser(user);
+        this.activated = activated;
     }
 
     public void updateSeekingPost(String title, String content) {

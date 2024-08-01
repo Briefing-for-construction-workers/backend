@@ -182,8 +182,8 @@ public class HiringPostServiceImpl implements HiringPostService {
 
             PostDto postDto = PostDto.builder()
                     .postId(hiringPost.getId())
-                    .postType("구인")
-                    .state(hiringPost.stateToVocab())
+                    .postType("hiring")
+                    .state(hiringPost.isState())
                     .title(hiringPost.getTitle())
                     .skills(skills)
                     .level(hiringPost.getLevel())

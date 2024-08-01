@@ -18,8 +18,8 @@ public class PostDto {
     private Long postId;
     @Schema(description = "게시글 종류", example = "구인")
     private String postType;
-    @Schema(description = "게시글 상태", example = "구인중")
-    private String state;
+    @Schema(description = "게시글 상태(구인-구인중/모집 완료, 구직-구직중/구직중 아님)", example = "true")
+    private boolean state;
     @Schema(description = "제목", example = "잘 하시는 분 1명 구합니다.")
     private String title;
     @Schema(description = "보유 기술", example = "[\"장판\"]")
@@ -32,7 +32,7 @@ public class PostDto {
     private String relativeTime;
 
     @Builder
-    public PostDto(Long postId, String postType, String state, String title, List<String> skills, String level, Date date, String relativeTime) {
+    public PostDto(Long postId, String postType, boolean state, String title, List<String> skills, String level, Date date, String relativeTime) {
         this.postId = postId;
         this.postType = postType;
         this.state = state;

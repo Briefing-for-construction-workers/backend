@@ -47,6 +47,7 @@ public class SeekingPostServiceImpl implements SeekingPostService {
                 .content(seekingPostReq.getContent())
                 .createdAt(timestamp)
                 .user(user)
+                .activated(true)
                 .build();
 
         seekingPost.putConstruction(construction);
@@ -94,11 +95,11 @@ public class SeekingPostServiceImpl implements SeekingPostService {
 
             PostDto postDto = PostDto.builder()
                     .postId(seekingPost.getId())
-                    .postType("구직")
+                    .postType("seeking")
+                    .state(seekingPost.isActivated())
                     .title(seekingPost.getTitle())
                     .skills(skills)
                     .level(seekingPost.getUser().getLevel())
-                    .date(null)
                     .relativeTime(relativeTime)
                     .build();
 
