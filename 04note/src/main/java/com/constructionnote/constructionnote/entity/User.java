@@ -17,6 +17,7 @@ public class User {
     @Column(name = "user_id")
     private String id;
     private String level;
+    private boolean state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_code")
@@ -36,7 +37,7 @@ public class User {
     private List<Post> postList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<HiringLike> hiringLikeList = new ArrayList<>();
+    private List<PostLike> postLikeList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<HiringPostApply> hiringPostApplyList = new ArrayList<>();
@@ -47,20 +48,25 @@ public class User {
 
     @OneToMany
     @JoinColumn(name = "reviewer_id")
-    private List<HiringReview> hiringReviewerList = new ArrayList<>();
+    private List<Review> reviewerList = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "reviewee_id")
-    private List<HiringReview> hiringRevieweeList = new ArrayList<>();
+    private List<Review> revieweeList = new ArrayList<>();
 
     @Builder
-    public User(String id, String level) {
+    public User(String id, String level, boolean state) {
         this.id = id;
+        this.level = level;
+        this.state = state;
+    }
+
+    public void updateLevel(String level) {
         this.level = level;
     }
 
-    public void updateUser(String level) {
-        this.level = level;
+    public void updateState() {
+        state = !this.state;
     }
 
     public void putAddress(Address address) { this.address = address; }

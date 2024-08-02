@@ -6,8 +6,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface CommunityService {
-    List<PostDto> viewPostList();
-    List<PostDto> viewMyPostList(String userId);
-
     List<PostDto> viewPostListByFilter(Integer page, String fullCode, String keyword) throws IOException;
 }

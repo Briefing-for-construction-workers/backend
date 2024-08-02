@@ -1,9 +1,7 @@
 package com.constructionnote.constructionnote.controller.community;
 
-import com.constructionnote.constructionnote.api.request.community.HiringPostApplyReq;
-import com.constructionnote.constructionnote.api.request.community.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
-import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
+import com.constructionnote.constructionnote.api.response.community.HiringPostRes;
 import com.constructionnote.constructionnote.service.community.HiringPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -37,7 +35,7 @@ public class HiringPostController {
                                       @Schema(description = "게시글id", example = "1")
                                       Long postId) {
         try {
-            return new ResponseEntity<HiringPostDetailRes>(hiringPostService.viewHiringPostById(postId), HttpStatus.OK);
+            return new ResponseEntity<HiringPostRes>(hiringPostService.viewHiringPostById(postId), HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
@@ -70,33 +68,13 @@ public class HiringPostController {
         }
     }
 
-    @Operation(summary = "구인 게시글 좋아요", description = "구인 게시글을 좋아요")
-    @PostMapping("/like")
-    public ResponseEntity<?> like(@RequestBody HiringPostLikeReq hiringPostLikeReq) {
+    @Operation(summary = "구인 게시글 모집 상태 변경", description = "게시글id에 해당하는 구인 게시글을 모집 상태를 변경")
+    @PutMapping("/{postid}/complete")
+    public ResponseEntity<?> updateState(@PathVariable("postid")
+                                    @Schema(description = "게시글id", example = "1")
+                                    Long postId) {
         try {
-            Long hiringLikeId = hiringPostService.likeHiringPost(hiringPostLikeReq);
-            return new ResponseEntity<>(hiringLikeId, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
-    @Operation(summary = "구인 게시글 지원", description = "구인 게시글에 지원")
-    @PostMapping("/apply")
-    public ResponseEntity<?> apply(@RequestBody HiringPostApplyReq hiringPostApplyReq) {
-        try {
-            Long hiringPostApplyId = hiringPostService.applyHiringPost(hiringPostApplyReq);
-            return new ResponseEntity<>(hiringPostApplyId, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
-    @Operation(summary = "구인 성사 등록", description = "구인 성사를 등록")
-    @PutMapping("/pick")
-    public ResponseEntity<?> pick(@RequestBody HiringPostApplyReq hiringPostApplyReq) {
-        try {
-            hiringPostService.pickApplicant(hiringPostApplyReq);
+            hiringPostService.updateHiringState(postId);
             return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);

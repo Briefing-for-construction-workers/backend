@@ -1,10 +1,10 @@
 package com.constructionnote.constructionnote.service.community;
 
 import com.constructionnote.constructionnote.api.request.community.HiringPostApplyReq;
-import com.constructionnote.constructionnote.api.request.community.HiringPostLikeReq;
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
-import com.constructionnote.constructionnote.api.response.community.HiringPostDetailRes;
-import com.constructionnote.constructionnote.dto.community.HiringPostDto;
+import com.constructionnote.constructionnote.component.DateProcess;
+import com.constructionnote.constructionnote.api.response.community.HiringPostRes;
+import com.constructionnote.constructionnote.dto.community.PostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
 import com.constructionnote.constructionnote.entity.*;
 import com.constructionnote.constructionnote.repository.*;
@@ -24,10 +24,11 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final HiringPostRepository hiringPostRepository;
-    private final HiringLikeRepository hiringLikeRepository;
     private final HiringPostApplyRepository hiringPostApplyRepository;
     private final SkillRepository skillRepository;
     private final AddressRepository addressRepository;
+
+    private final DateProcess dateProcess;
 
     @Override
     public Long registerHiringPost(HiringPostReq hiringPostReq) {
@@ -48,8 +49,11 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .user(user)
                 .build();
 
+        System.out.println(hiringPostReq.getSkills().size());
+
         if(hiringPostReq.getSkills() != null) {
             for(String skillName : hiringPostReq.getSkills()) {
+
                 Skill skill = skillRepository.findByName(skillName).orElse(null);
 
                 if(skill == null) {
@@ -79,7 +83,7 @@ public class HiringPostServiceImpl implements HiringPostService {
     }
 
     @Override
-    public HiringPostDetailRes viewHiringPostById(Long postId) throws Exception {
+    public HiringPostRes viewHiringPostById(Long postId) throws Exception {
         HiringPost hiringPost = hiringPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
 
@@ -103,7 +107,7 @@ public class HiringPostServiceImpl implements HiringPostService {
             skills.add(postSkill.getSkill().getName());
         }
 
-        HiringPostDto hiringPostDto = HiringPostDto.builder()
+        return HiringPostRes.builder()
                 .title(hiringPost.getTitle())
                 .skills(skills)
                 .location(hiringPost.getAddress().getFullAddressName())
@@ -111,12 +115,7 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .level(hiringPost.getLevel())
                 .pay(hiringPost.getPay())
                 .content(hiringPost.getContent())
-                .build();
-
-        return HiringPostDetailRes.builder()
-                .profileDto(profileDto)
-                .kind("구인")
-                .hiringPostDto(hiringPostDto)
+                .state(hiringPost.stateToVocab())
                 .build();
     }
 
@@ -168,25 +167,34 @@ public class HiringPostServiceImpl implements HiringPostService {
     }
 
     @Override
-    public Long likeHiringPost(HiringPostLikeReq hiringPostLikeReq) {
-        User user = userRepository.findById(hiringPostLikeReq.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("user doesn't exist"));
+    public List<PostDto> viewHiringPostByUserId(String userId) {
+        List<HiringPost> hiringPostList = hiringPostRepository.findByUserIdOrderByCreatedAtDesc(userId);
 
-        HiringPost hiringPost = hiringPostRepository.findById(hiringPostLikeReq.getPostId())
-                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+        List<PostDto> postDtoList = new ArrayList<>();
+        for(HiringPost hiringPost : hiringPostList) {
+            String relativeTime = dateProcess.convertToRelativeTime(hiringPost.getCreatedAt());
 
-        Date currentDate = new Date();
-        Timestamp timestamp = new Timestamp(currentDate.getTime());
+            List<PostSkill> postSkillList = hiringPost.getPostSkillList();
+            List<String> skills  = new ArrayList<>();
+            for(PostSkill postSkill : postSkillList) {
+                skills.add(postSkill.getSkill().getName());
+            }
 
-        HiringLike hiringLike = HiringLike.builder()
-                .createdAt(timestamp)
-                .user(user)
-                .hiringPost(hiringPost)
-                .build();
+            PostDto postDto = PostDto.builder()
+                    .postId(hiringPost.getId())
+                    .postType("hiring")
+                    .state(hiringPost.isState())
+                    .title(hiringPost.getTitle())
+                    .skills(skills)
+                    .level(hiringPost.getLevel())
+                    .date(hiringPost.getDate())
+                    .relativeTime(relativeTime)
+                    .build();
 
-        hiringLikeRepository.save(hiringLike);
+            postDtoList.add(postDto);
+        }
 
-        return hiringLike.getId();
+        return postDtoList;
     }
 
     @Override
@@ -224,6 +232,15 @@ public class HiringPostServiceImpl implements HiringPostService {
         hiringPostApply.pickApplicant();
 
         hiringPostApplyRepository.save(hiringPostApply);
+    }
+
+    @Override
+    public void updateHiringState(Long postId) {
+        HiringPost hiringPost = hiringPostRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("hiringPost doesn't exist"));
+
+        hiringPost.updateState();
+        hiringPostRepository.save(hiringPost);
     }
 
 }

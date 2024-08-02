@@ -16,16 +16,24 @@ import java.sql.Timestamp;
 @OnDelete(action = OnDeleteAction.CASCADE)
 @Entity
 public class SeekingPost extends Post {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "construction_id")
     private Construction construction;
+    private boolean activated;
 
     @Builder
-    public SeekingPost(String title, String content, Timestamp createdAt, User user, Construction construction) {
+    public SeekingPost(String title, String content, Timestamp createdAt, User user, boolean activated) {
         setTitle(title);
         setContent(content);
         setCreatedAt(createdAt);
         setUser(user);
-        this.construction = construction;
+        this.activated = activated;
     }
+
+    public void updateSeekingPost(String title, String content) {
+        setTitle(title);
+        setContent(content);
+    }
+
+    public void putConstruction(Construction construction) { this.construction = construction; }
 }

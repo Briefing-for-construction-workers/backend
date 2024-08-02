@@ -10,4 +10,6 @@ public interface UserService {
 
     void updateUserProfile(UserReq userReq, MultipartFile image) throws Exception;
     UserProfileRes getUserProfile(String userId) throws Exception;
+
+    void updateSeekingState(String userId);
 }

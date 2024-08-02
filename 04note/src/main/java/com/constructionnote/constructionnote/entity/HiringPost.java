@@ -59,4 +59,10 @@ public class HiringPost extends Post {
     public void addPostSkill(PostSkill postSkill) {
         this.postSkillList.add(postSkill);
     }
+
+    public void updateState() { state = !this.state; }
+
+    public String stateToVocab() {
+        return this.state ? "구직 완료" : "구직중";
+    }
 }

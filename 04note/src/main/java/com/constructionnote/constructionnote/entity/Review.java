@@ -13,13 +13,14 @@ import java.sql.Timestamp;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@SQLDelete(sql = "UPDATE hiring_review SET deleted = true WHERE hiring_review_id = ?")
+@SQLDelete(sql = "UPDATE review SET deleted = true WHERE review_id = ?")
 @SQLRestriction("deleted = false")
-public class HiringReview {
+public class Review {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hiring_review_id")
+    @Column(name = "review_id")
     private Long id;
     private String content;
+    private int rate;
     private Timestamp createdAt;
     private boolean deleted = Boolean.FALSE;
 
@@ -31,20 +32,25 @@ public class HiringReview {
     @JoinColumn(name = "reviewee_id")
     private User reviewee;
 
+    @Enumerated(EnumType.STRING)
+    private PostType type;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hiring_post_id")
-    private HiringPost hiringPost;
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @Builder
-    public HiringReview(String content, Timestamp createdAt, User reviewer, User reviewee, HiringPost hiringPost) {
+    public Review(String content, int rate, Timestamp createdAt, User reviewer, User reviewee, PostType type, Post post) {
         this.content = content;
+        this.rate = rate;
         this.createdAt = createdAt;
         this.reviewer = reviewer;
         this.reviewee = reviewee;
-        this.hiringPost = hiringPost;
+        this.type = type;
+        this.post = post;
     }
 
-    public void updateHiringReview(String content) {
+    public void updateReview(String content) {
         this.content = content;
     }
 }
