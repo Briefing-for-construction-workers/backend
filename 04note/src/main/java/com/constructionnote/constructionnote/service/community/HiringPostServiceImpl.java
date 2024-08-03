@@ -4,12 +4,14 @@ import com.constructionnote.constructionnote.api.request.community.HiringPostApp
 import com.constructionnote.constructionnote.api.request.community.HiringPostReq;
 import com.constructionnote.constructionnote.component.DateProcess;
 import com.constructionnote.constructionnote.api.response.community.HiringPostRes;
+import com.constructionnote.constructionnote.component.GeoUtils;
 import com.constructionnote.constructionnote.dto.community.PostDto;
 import com.constructionnote.constructionnote.dto.user.ProfileDto;
 import com.constructionnote.constructionnote.entity.*;
 import com.constructionnote.constructionnote.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -21,6 +23,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class HiringPostServiceImpl implements HiringPostService {
+    static final int PAGE_SIZE = 10;
+
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final HiringPostRepository hiringPostRepository;
@@ -29,6 +33,7 @@ public class HiringPostServiceImpl implements HiringPostService {
     private final AddressRepository addressRepository;
 
     private final DateProcess dateProcess;
+    private final GeoUtils geoUtils;
 
     @Override
     public Long registerHiringPost(HiringPostReq hiringPostReq) {
@@ -170,31 +175,7 @@ public class HiringPostServiceImpl implements HiringPostService {
     public List<PostDto> viewHiringPostByUserId(String userId) {
         List<HiringPost> hiringPostList = hiringPostRepository.findByUserIdOrderByCreatedAtDesc(userId);
 
-        List<PostDto> postDtoList = new ArrayList<>();
-        for(HiringPost hiringPost : hiringPostList) {
-            String relativeTime = dateProcess.convertToRelativeTime(hiringPost.getCreatedAt());
-
-            List<PostSkill> postSkillList = hiringPost.getPostSkillList();
-            List<String> skills  = new ArrayList<>();
-            for(PostSkill postSkill : postSkillList) {
-                skills.add(postSkill.getSkill().getName());
-            }
-
-            PostDto postDto = PostDto.builder()
-                    .postId(hiringPost.getId())
-                    .postType("hiring")
-                    .state(hiringPost.isState())
-                    .title(hiringPost.getTitle())
-                    .skills(skills)
-                    .level(hiringPost.getLevel())
-                    .date(hiringPost.getDate())
-                    .relativeTime(relativeTime)
-                    .build();
-
-            postDtoList.add(postDto);
-        }
-
-        return postDtoList;
+        return getPostDtoList(hiringPostList);
     }
 
     @Override
@@ -241,6 +222,48 @@ public class HiringPostServiceImpl implements HiringPostService {
 
         hiringPost.updateState();
         hiringPostRepository.save(hiringPost);
+    }
+
+    @Override
+    public List<PostDto> viewHiringPostsByFilter(Integer page, String fullCode, Double distance, String keyword, String state) {
+        Address address = addressRepository.findById(fullCode)
+                .orElseThrow(() -> new IllegalArgumentException("addressCode doesn't exist"));
+
+        double[] boundingBox = geoUtils.getBoundingBox(address.getLat(), address.getLng(), distance);
+        List<String> nearbyAddressCodes = addressRepository.getNearbyAddressCodeByBoundingBox(address.getLat(), address.getLng(), boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
+
+        PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
+        List<HiringPost> hiringPostList = hiringPostRepository.findByAddressCodeAndKeyword(pageRequest, nearbyAddressCodes, keyword, state);
+
+        return getPostDtoList(hiringPostList);
+    }
+
+    private List<PostDto> getPostDtoList(List<HiringPost> hiringPostList) {
+        List<PostDto> postDtoList = new ArrayList<>();
+        for(HiringPost hiringPost : hiringPostList) {
+            String relativeTime = dateProcess.convertToRelativeTime(hiringPost.getCreatedAt());
+
+            List<PostSkill> postSkillList = hiringPost.getPostSkillList();
+            List<String> skills  = new ArrayList<>();
+            for(PostSkill postSkill : postSkillList) {
+                skills.add(postSkill.getSkill().getName());
+            }
+
+            PostDto postDto = PostDto.builder()
+                    .postId(hiringPost.getId())
+                    .postType("hiring")
+                    .state(hiringPost.isState())
+                    .title(hiringPost.getTitle())
+                    .skills(skills)
+                    .level(hiringPost.getLevel())
+                    .date(hiringPost.getDate())
+                    .relativeTime(relativeTime)
+                    .build();
+
+            postDtoList.add(postDto);
+        }
+
+        return postDtoList;
     }
 
 }
