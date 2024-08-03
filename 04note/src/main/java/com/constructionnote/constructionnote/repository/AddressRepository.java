@@ -15,7 +15,7 @@ public interface AddressRepository extends JpaRepository<Address, String> {
                     "FROM address " +
                     "WHERE lat BETWEEN :minLat AND :maxLat " +
                     "AND lng BETWEEN :minLon AND :maxLon " +
-                    "AND ST_Distance_Sphere(POINT(:lng, :lat), POINT(lng, lat)) <= 1000 ",
+                    "AND ST_Distance_Sphere(POINT(:lng, :lat), POINT(lng, lat)) <= (:distance * 1000) ",
             nativeQuery = true
     )
     List<String> getNearbyAddressCodeByBoundingBox(@Param("lat") double lat,
@@ -23,5 +23,6 @@ public interface AddressRepository extends JpaRepository<Address, String> {
                                                    @Param("minLat") double minLat,
                                                    @Param("minLon") double minLon,
                                                    @Param("maxLat")double maxLat,
-                                                   @Param("maxLon") double maxLon);
+                                                   @Param("maxLon") double maxLon,
+                                                   @Param("distance") double distance);
 }

@@ -230,7 +230,7 @@ public class HiringPostServiceImpl implements HiringPostService {
                 .orElseThrow(() -> new IllegalArgumentException("addressCode doesn't exist"));
 
         double[] boundingBox = geoUtils.getBoundingBox(address.getLat(), address.getLng(), distance);
-        List<String> nearbyAddressCodes = addressRepository.getNearbyAddressCodeByBoundingBox(address.getLat(), address.getLng(), boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
+        List<String> nearbyAddressCodes = addressRepository.getNearbyAddressCodeByBoundingBox(address.getLat(), address.getLng(), boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], distance);
 
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
         List<HiringPost> hiringPostList = hiringPostRepository.findByAddressCodeAndKeyword(pageRequest, nearbyAddressCodes, keyword, state);
