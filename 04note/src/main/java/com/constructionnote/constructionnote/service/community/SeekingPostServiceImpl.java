@@ -2,17 +2,13 @@ package com.constructionnote.constructionnote.service.community;
 
 import com.constructionnote.constructionnote.api.request.community.SeekingPostReq;
 import com.constructionnote.constructionnote.component.DateProcess;
+import com.constructionnote.constructionnote.component.GeoUtils;
 import com.constructionnote.constructionnote.dto.community.PostDto;
-import com.constructionnote.constructionnote.entity.Construction;
-import com.constructionnote.constructionnote.entity.SeekingPost;
-import com.constructionnote.constructionnote.entity.User;
-import com.constructionnote.constructionnote.entity.UserSkill;
-import com.constructionnote.constructionnote.repository.ConstructionRepository;
-import com.constructionnote.constructionnote.repository.PostRepository;
-import com.constructionnote.constructionnote.repository.SeekingPostRepository;
-import com.constructionnote.constructionnote.repository.UserRepository;
+import com.constructionnote.constructionnote.entity.*;
+import com.constructionnote.constructionnote.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -24,12 +20,16 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SeekingPostServiceImpl implements SeekingPostService {
+    static final int PAGE_SIZE = 10;
+
     private final UserRepository userRepository;
     private final ConstructionRepository constructionRepository;
     private final PostRepository postRepository;
     private final SeekingPostRepository seekingPostRepository;
+    private final AddressRepository addressRepository;
 
     private final DateProcess dateProcess;
+    private final GeoUtils geoUtils;
 
     @Override
     public Long registerSeekingPost(SeekingPostReq seekingPostReq) {
@@ -83,6 +83,24 @@ public class SeekingPostServiceImpl implements SeekingPostService {
     public List<PostDto> viewSeekingPostByUserId(String userId) {
         List<SeekingPost> seekingPostList = seekingPostRepository.findByUserIdOrderByCreatedAtDesc(userId);
 
+        return getPostDtoList(seekingPostList);
+    }
+
+    @Override
+    public List<PostDto> viewSeekingPostsByFilter(Integer page, String fullCode, Double distance, String keyword, String state) {
+        Address address = addressRepository.findById(fullCode)
+                .orElseThrow(() -> new IllegalArgumentException("addressCode doesn't exist"));
+
+        double[] boundingBox = geoUtils.getBoundingBox(address.getLat(), address.getLng(), distance);
+        List<String> nearbyAddressCodes = addressRepository.getNearbyAddressCodeByBoundingBox(address.getLat(), address.getLng(), boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
+
+        PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
+        List<SeekingPost> seekingPostList = seekingPostRepository.findByAddressCodeAndKeyword(pageRequest, nearbyAddressCodes, keyword, state);
+
+        return getPostDtoList(seekingPostList);
+    }
+
+    private List<PostDto> getPostDtoList(List<SeekingPost> seekingPostList) {
         List<PostDto> postDtoList = new ArrayList<>();
         for(SeekingPost seekingPost : seekingPostList) {
             String relativeTime = dateProcess.convertToRelativeTime(seekingPost.getCreatedAt());
