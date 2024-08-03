@@ -11,4 +11,6 @@ public interface SeekingPostService {
     void deleteSeekingPost(Long postId);
 
     List<PostDto> viewSeekingPostByUserId(String userId);
+
+    List<PostDto> viewSeekingPostsByFilter(Integer page, String fullCode, Double distance, String keyword, String state);
 }

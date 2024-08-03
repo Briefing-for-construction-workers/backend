@@ -18,4 +18,6 @@ public interface HiringPostService {
     void pickApplicant(HiringPostApplyReq hiringPostApplyReq);
 
     void updateHiringState(Long postId);
+
+    List<PostDto> viewHiringPostsByFilter(Integer page, String fullCode, Double distance, String keyword, String state);
 }
